@@ -1,0 +1,24 @@
+{
+  "current": {
+    "system": { "status": "FIRE", "lastUpdated": 1788963000000 },
+    "zones": {
+      "A": { "temperature": 30.2, "smoke": 120, "fire": false },
+      "B": { "temperature": 78.5, "smoke": 2650, "fire": true },
+      "C": { "temperature": 31.0, "smoke": 130, "fire": false },
+      "D": { "temperature": 29.8, "smoke": 110, "fire": false },
+      "E": { "temperature": 30.4, "smoke": 115, "fire": false },
+      "F": { "temperature": 30.1, "smoke": 105, "fire": false }
+    },
+    "routes": {
+      "A": { "status": "AVAILABLE", "exit": "G1", "cost": 3, "nodes": ["A", "C", "G1"] },
+      "B": { "status": "FIRE", "exit": "G1", "cost": 3, "nodes": ["B", "C", "G1"] },
+      "C": { "status": "AVAILABLE", "exit": "G1", "cost": 1, "nodes": ["C", "G1"] },
+      "D": { "status": "AVAILABLE", "exit": "G1", "cost": 3, "nodes": ["D", "C", "G1"] },
+      "E": { "status": "AVAILABLE", "exit": "G1", "cost": 1, "nodes": ["E", "G1"] },
+      "F": { "status": "AVAILABLE", "exit": "G2", "cost": 1, "nodes": ["F", "G2"] }
+    }
+  },
+  "fireHistory": {
+    "-demo001": { "zone": "B", "time_start": 1788963000000, "time_end": null }
+  }
+}

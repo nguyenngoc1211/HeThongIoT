@@ -1,0 +1,15 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "current": {
+      ".validate": "newData.hasChildren(['system', 'zones', 'routes'])"
+    },
+    "fireHistory": {
+      "$caseId": {
+        ".validate": "newData.hasChildren(['zone', 'time_start']) && newData.child('zone').isString()"
+      }
+    }
+  }
+}
+

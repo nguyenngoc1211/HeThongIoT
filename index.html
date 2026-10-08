@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FireRoute | Trung tâm điều khiển thoát hiểm</title>
+    <meta name="description" content="Hệ thống giám sát và dẫn đường thoát hiểm khi cháy – FireRoute IoT" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230a1628'/><path d='M8 24L24 8M24 8H14M24 8v10' stroke='%2300e676' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>" />
+  </head>
+  <body>
+    <!-- Emergency screen border glow -->
+    <div class="emergency-glow" id="emergencyGlow" aria-hidden="true"></div>
+
+    <!-- Emergency banner -->
+    <div class="emergency-banner" id="emergencyBanner" role="alert" aria-live="assertive" hidden>
+      <div class="emergency-banner-inner">
+        <svg class="emergency-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="emergency-text" id="emergencyText">CẢNH BÁO CHÁY</span>
+        <span class="emergency-detail" id="emergencyDetail"></span>
+      </div>
+    </div>
+
+    <!-- Command Bar -->
+    <header class="command-bar anim-item" role="banner">
+      <a class="brand" href="#" aria-label="FireRoute – Trang chủ">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 24L24 8M24 8H14M24 8v10"/></svg>
+        </span>
+        <span class="brand-name">Fire<span>Route</span></span>
+      </a>
+      <div class="floor-tag anim-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+        <span>TẦNG 01</span>
+      </div>
+      <div class="bar-spacer"></div>
+      <div class="connection anim-item" role="status" aria-live="polite">
+        <span class="conn-dot" id="connectionDot" aria-hidden="true"></span>
+        <span id="connectionText">Đang khởi động…</span>
+      </div>
+      <div class="realtime-clock anim-item" aria-label="Đồng hồ hệ thống">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="realtimeClock" class="mono">--:--:--</span>
+      </div>
+    </header>
+
+    <main id="mainContent">
+      <!-- System Health Strip -->
+      <div class="health-strip" aria-label="Tổng quan hệ thống">
+        <div class="health-item anim-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          <span class="health-label">Giám sát</span>
+          <strong class="mono">6</strong>
+          <span class="health-sub">zone</span>
+        </div>
+        <div class="health-divider" aria-hidden="true"></div>
+        <div class="health-item anim-item" id="healthFire">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22c-4.97 0-9-4.03-9-9 0-3 1.5-5.6 3.8-7.2V2l3.2 3.5L13 2l3.2 3.5L19.2 2v3.8C21.5 7.4 23 10 23 13c0 4.97-4.03 9-9 9z"/></svg>
+          <span class="health-label">Nguy hiểm</span>
+          <strong class="mono" id="fireCount">0</strong>
+          <span class="health-sub" id="fireText">zone</span>
+        </div>
+        <div class="health-divider" aria-hidden="true"></div>
+        <div class="health-item anim-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span class="health-label">Lối thoát</span>
+          <strong class="mono" id="exitCount">2/2</strong>
+          <span class="health-sub" id="exitNames">G1 · G2</span>
+        </div>
+        <div class="health-divider" aria-hidden="true"></div>
+        <div class="health-item anim-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="health-label">Cập nhật</span>
+          <strong class="mono" id="updateTime">--:--</strong>
+          <span class="health-sub" id="updateDate">--</span>
+        </div>
+        <div class="health-stale" id="staleWarning" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Dữ liệu cũ</span>
+        </div>
+      </div>
+
+      <!-- Main dashboard layout -->
+      <div class="dashboard-layout">
+        <!-- MAP SECTION -->
+        <section class="map-section anim-item">
+          <div class="map-header">
+            <div>
+              <span class="tag">BẢN ĐỒ TRỰC TIẾP</span>
+              <h2>Sơ đồ mặt bằng — Tầng 01</h2>
+            </div>
+            <div class="map-legend" aria-label="Chú thích">
+              <span><i class="dot dot-safe" aria-hidden="true"></i>An toàn</span>
+              <span><i class="dot dot-fire" aria-hidden="true"></i>Cháy</span>
+              <span><i class="dot dot-exit" aria-hidden="true"></i>Cửa thoát</span>
+              <span><i class="dot dot-route" aria-hidden="true"></i>Tuyến thoát</span>
+            </div>
+          </div>
+          <div id="floorMap" class="map-canvas" role="img" aria-label="Bản đồ 6 khu vực cảm biến và 2 cửa thoát hiểm"></div>
+          <p class="map-hint">Mỗi mũi tên là hướng đi tiếp theo tại khu vực đó · Nhấn một zone để kiểm tra toàn bộ tuyến</p>
+        </section>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+          <!-- Route Panel -->
+          <div class="glass-panel route-panel anim-item">
+            <div class="panel-head">
+              <span class="tag">CHỈ DẪN TOÀN TẦNG</span>
+              <h3 id="routeTitle">Tất cả khu vực</h3>
+            </div>
+            <div id="routeDetail" class="route-body" aria-live="polite"></div>
+          </div>
+
+          <!-- Zone Detail Panel -->
+          <div class="glass-panel zone-detail-panel anim-item">
+            <div class="panel-head">
+              <span class="tag">CHI TIẾT KHU VỰC</span>
+              <h3 id="zoneDetailTitle">Hướng dẫn sử dụng</h3>
+            </div>
+            <div id="zoneDetail" class="zone-detail-body"></div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- SENSORS -->
+      <section class="sensors-section anim-item">
+        <div class="section-head">
+          <div>
+            <span class="tag">CẢM BIẾN THỜI GIAN THỰC</span>
+            <h2>Trạng thái khu vực</h2>
+          </div>
+          <label class="sort-toggle">
+            <input type="checkbox" id="sortDanger" />
+            <span>Nguy hiểm trước</span>
+          </label>
+        </div>
+        <div id="sensorGrid" class="sensor-grid" role="list"></div>
+      </section>
+
+      <!-- HISTORY -->
+      <section class="glass-panel history-section anim-item">
+        <button class="history-toggle" id="historyToggle" type="button" aria-expanded="true" aria-controls="historyContent">
+          <div>
+            <span class="tag">NHẬT KÝ</span>
+            <h3>Lịch sử cảnh báo cháy</h3>
+          </div>
+          <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="historyContent" class="history-body"></div>
+      </section>
+
+      <!-- DEMO PANEL -->
+      <section class="glass-panel demo-section" id="demoPanel" hidden>
+        <div class="panel-head">
+          <span class="tag tag-demo">CHẾ ĐỘ MÔ PHỎNG</span>
+          <h3>Bảng điều khiển demo</h3>
+        </div>
+        <p class="demo-desc">Bật/tắt cháy tại từng zone hoặc chạy kịch bản mẫu. Tuyến thoát hiểm sẽ tự tính lại.</p>
+        <div class="demo-grid">
+          <div class="demo-group">
+            <span class="demo-group-label">Mô phỏng cháy</span>
+            <div class="demo-zone-btns" id="demoZones" role="group" aria-label="Bật/tắt cháy"></div>
+          </div>
+          <div class="demo-group">
+            <span class="demo-group-label">Kịch bản mẫu</span>
+            <div class="demo-scenario-btns">
+              <button class="demo-btn scenario" data-scenario="1" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                KB1: Cháy tại B
+              </button>
+              <button class="demo-btn scenario" data-scenario="2" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                KB2: Chặn hành lang C
+              </button>
+              <button class="demo-btn scenario" data-scenario="3" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                KB3: Nhiều điểm cháy
+              </button>
+            </div>
+          </div>
+          <div class="demo-group">
+            <span class="demo-group-label">Điều khiển</span>
+            <div class="demo-control-btns">
+              <button class="demo-btn clear" id="demoClearBtn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                Khôi phục an toàn
+              </button>
+              <button class="demo-btn auto" id="demoAutoBtn" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                Phát demo tự động
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+
+    <footer class="site-footer" role="contentinfo">
+      <span>FireRoute — Hệ thống dẫn đường thoát hiểm IoT</span>
+    </footer>
+
+    <script src="firebase-config.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
