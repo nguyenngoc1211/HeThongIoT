@@ -416,9 +416,10 @@ function renderRoute() {
 function renderZoneDetail() {
   const c = $("#zoneDetail");
   if (!c) return;
+  const panel = c.closest(".zone-detail-panel");
+  if (panel) panel.hidden = !selectedZone;
   if (!selectedZone) {
-    setText("#zoneDetailTitle", "Cách đọc chỉ dẫn");
-    c.innerHTML = `<div class="overview-help"><span class="help-arrow">→</span><p><strong>Không cần chọn nơi xuất phát.</strong><br/>Ở mỗi khu vực, hãy đi theo mũi tên xanh tại khu vực đó. Mũi tên cam yêu cầu rời zone cháy ngay lập tức.</p></div>`;
+    c.innerHTML = "";
     return;
   }
   setText("#zoneDetailTitle", `Zone ${selectedZone}`);
