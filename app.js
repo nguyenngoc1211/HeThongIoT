@@ -54,6 +54,7 @@ const ROOMS = [
 const TEMP_WARN = 48, TEMP_FIRE = 55;
 const SMOKE_WARN = 1400, SMOKE_FIRE = 1800;
 const STALE_MS = 30000;
+const SENSOR_STALE_MS = 7000;
 
 // ════════════════════════════════════════════════════════════
 // 2. STATE
@@ -67,6 +68,10 @@ let autoPlayAbort = false;
 let particleRAF = null;
 let particles = [];
 let previousValues = {};
+let dataMode = "test";
+let realtimeSource = null;
+let testStateSnapshot = null;
+let realtimeRenderTimer = null;
 
 let state = {
   current: {
@@ -77,7 +82,7 @@ let state = {
 };
 ZONES.forEach(id => {
   const t = 28 + Math.random() * 4;
-  state.current.zones[id] = { temperature: +t.toFixed(1), smoke: 100 + Math.floor(Math.random() * 40), fire: false };
+  state.current.zones[id] = { temperature: +t.toFixed(1), humidity: 60 + Math.floor(Math.random() * 12), smoke: 100 + Math.floor(Math.random() * 40), fire: false };
 });
 
 // ════════════════════════════════════════════════════════════
@@ -93,6 +98,8 @@ function formatDate(ts) { if (!ts) return "--"; const d = new Date(ts); return i
 function formatDT(ts) { return ts ? `${formatDate(ts)} ${formatTime(ts)}` : "--"; }
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 function wait(ms) { return new Promise(r => { const id = setTimeout(r, ms); if (autoPlayAbort) { clearTimeout(id); r(); } }); }
+function cloneState(value) { return typeof structuredClone === "function" ? structuredClone(value) : JSON.parse(JSON.stringify(value)); }
+function hasNumber(value) { return value !== null && value !== "" && Number.isFinite(Number(value)); }
 
 // ════════════════════════════════════════════════════════════
 // 4. DIJKSTRA
@@ -449,8 +456,12 @@ function renderZoneDetail() {
   setText("#zoneDetailTitle", `Zone ${selectedZone}`);
 
   const d = state.current.zones[selectedZone] || { temperature: 0, smoke: 0, fire: false };
-  const temp = Number(d.temperature) || 0;
-  const smoke = Number(d.smoke) || 0;
+  const tempAvailable = hasNumber(d.temperature);
+  const temp = tempAvailable ? Number(d.temperature) : 0;
+  const smokeAvailable = hasNumber(d.smoke);
+  const smoke = smokeAvailable ? Number(d.smoke) : 0;
+  const humidityAvailable = hasNumber(d.humidity);
+  const humidity = humidityAvailable ? Number(d.humidity) : 0;
   const fire = !!d.fire;
   const hiT = temp >= TEMP_WARN, hiS = smoke >= SMOKE_WARN;
 
@@ -460,15 +471,16 @@ function renderZoneDetail() {
   const sCls = fire || smoke >= SMOKE_FIRE ? "danger" : hiS ? "warn" : "safe";
 
   let statusCls, statusText;
-  if (fire) { statusCls = "fire"; statusText = "CHÁY"; }
+  if (dataMode === "realtime" && !d.online) { statusCls = "warn"; statusText = d.lastReading ? "MẤT KẾT NỐI" : "CHỜ DỮ LIỆU"; }
+  else if (fire) { statusCls = "fire"; statusText = "CHÁY"; }
   else if (hiT || hiS) { statusCls = "warn"; statusText = "CẢNH BÁO"; }
   else { statusCls = "safe"; statusText = "AN TOÀN"; }
 
   c.innerHTML = `
-    <div class="zd-row"><span class="zd-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>Nhiệt độ</span><span class="zd-value${hiT || fire ? " high" : ""} mono">${temp.toFixed(1)}°C</span></div>
+    <div class="zd-row"><span class="zd-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>Nhiệt độ</span><span class="zd-value${hiT || fire ? " high" : ""} mono">${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</span></div>
     <div class="zd-gauge"><div class="zd-gauge-fill ${tCls}" style="width:${tPct}%"></div></div>
-    <div class="zd-row"><span class="zd-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M8 9s1.5 2 4 2 4-2 4-2"/><path d="M8 19s1.5 2 4 2 4-2 4-2"/></svg>ADC Khói</span><span class="zd-value${hiS || fire ? " high" : ""} mono">${smoke}</span></div>
-    <div class="zd-gauge"><div class="zd-gauge-fill ${sCls}" style="width:${sPct}%"></div></div>
+    <div class="zd-row"><span class="zd-label">Độ ẩm</span><span class="zd-value mono">${humidityAvailable ? `${humidity.toFixed(1)}%` : "--"}</span></div>
+    ${dataMode === "test" ? `<div class="zd-row"><span class="zd-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M8 9s1.5 2 4 2 4-2 4-2"/><path d="M8 19s1.5 2 4 2 4-2 4-2"/></svg>ADC Khói</span><span class="zd-value${hiS || fire ? " high" : ""} mono">${smoke}</span></div><div class="zd-gauge"><div class="zd-gauge-fill ${sCls}" style="width:${sPct}%"></div></div>` : ""}
     <div style="margin-top:8px"><span class="zd-status ${statusCls}">${statusText}</span></div>
   `;
 }
@@ -493,17 +505,21 @@ function renderSensors() {
   let h = "";
   for (const id of ids) {
     const d = zones[id] || { temperature: 0, smoke: 0, fire: false };
-    const temp = Number(d.temperature) || 0, smoke = Number(d.smoke) || 0, fire = !!d.fire;
+    const tempAvailable = hasNumber(d.temperature), smokeAvailable = hasNumber(d.smoke), humidityAvailable = hasNumber(d.humidity);
+    const temp = tempAvailable ? Number(d.temperature) : 0, smoke = smokeAvailable ? Number(d.smoke) : 0, humidity = humidityAvailable ? Number(d.humidity) : 0, fire = !!d.fire;
     const hiT = temp >= TEMP_WARN, hiS = smoke >= SMOKE_WARN, isWarn = (hiT || hiS) && !fire;
+    const offline = dataMode === "realtime" && !d.online;
 
     let cardCls = "sensor-card", badgeCls = "sb-safe", badgeText = "AN TOÀN";
-    if (fire) { cardCls += " s-fire"; badgeCls = "sb-fire"; badgeText = "CHÁY"; }
+    if (offline) { cardCls += " s-offline"; badgeCls = "sb-offline"; badgeText = d.lastReading ? "MẤT KẾT NỐI" : "CHỜ DỮ LIỆU"; }
+    else if (fire) { cardCls += " s-fire"; badgeCls = "sb-fire"; badgeText = "CHÁY"; }
     else if (isWarn) { cardCls += " s-warn"; badgeCls = "sb-warn"; badgeText = "CẢNH BÁO"; }
 
     h += `<article class="${cardCls}" role="listitem" data-zone="${id}" aria-label="Zone ${id} – ${badgeText}">
       <span class="sensor-id">${escapeHtml(id)}</span>
-      <span class="sensor-val${hiT || fire ? " val-high" : ""}">${temp.toFixed(1)}°C</span>
-      <span class="sensor-val${hiS || fire ? " val-high" : ""}">Khói ${smoke}</span>
+      <span class="sensor-val${hiT || fire ? " val-high" : ""}">Nhiệt độ: ${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</span>
+      <span class="sensor-val">Độ ẩm: ${humidityAvailable ? `${humidity.toFixed(1)}%` : "--"}</span>
+      ${dataMode === "test" ? `<span class="sensor-val${hiS || fire ? " val-high" : ""}">Khói: ${smoke}</span>` : ""}
       <span class="sensor-badge ${badgeCls}">${badgeText}</span>
     </article>`;
   }
@@ -572,13 +588,16 @@ function showTooltip(zoneId, event) {
   const tip = $("#tooltip");
   if (!tip) return;
   const d = state.current.zones[zoneId] || {};
-  const temp = Number(d.temperature) || 0, smoke = Number(d.smoke) || 0, fire = !!d.fire;
+  const tempAvailable = hasNumber(d.temperature), humidityAvailable = hasNumber(d.humidity);
+  const temp = tempAvailable ? Number(d.temperature) : 0, smoke = hasNumber(d.smoke) ? Number(d.smoke) : 0, fire = !!d.fire;
   const status = fire ? "CHÁY" : (temp >= TEMP_WARN || smoke >= SMOKE_WARN) ? "CẢNH BÁO" : "AN TOÀN";
   const statusCls = fire ? "tt-fire" : (temp >= TEMP_WARN || smoke >= SMOKE_WARN) ? "tt-fire" : "tt-safe";
 
   tip.innerHTML = `<div class="tt-zone">Zone ${escapeHtml(zoneId)}</div>
-    <div class="tt-row"><span>Nhiệt độ</span><strong>${temp.toFixed(1)}°C</strong></div>
-    <div class="tt-row"><span>ADC Khói</span><strong>${smoke}</strong></div>
+    <div class="tt-row"><span>Nhiệt độ</span><strong>${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</strong></div>
+    ${dataMode === "realtime"
+      ? `<div class="tt-row"><span>Độ ẩm</span><strong>${humidityAvailable ? `${Number(d.humidity).toFixed(1)}%` : "--"}</strong></div>`
+      : `<div class="tt-row"><span>ADC Khói</span><strong>${smoke}</strong></div>`}
     <div class="tt-status ${statusCls}">${status}</div>`;
   tip.hidden = false;
   moveTooltip(event);
@@ -615,6 +634,7 @@ function hideTooltip() {
 // ════════════════════════════════════════════════════════════
 
 function initMockMode() {
+  dataMode = "test";
   isMockMode = true;
   const dot = $("#connectionDot");
   if (dot) dot.className = "conn-dot mock";
@@ -623,6 +643,7 @@ function initMockMode() {
   if (dp) { dp.hidden = false; renderDemoZones(); }
   state.current.system.lastUpdated = Date.now();
   state.current.routes = computeRoutes(state.current.zones);
+  updateModeUI();
   render();
 }
 
@@ -761,7 +782,135 @@ async function autoPlayDemo() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 14. FIREBASE
+// 14. LIVE SERIAL MODE (ESP32 -> serial_server.py -> SSE)
+// ════════════════════════════════════════════════════════════
+
+function updateModeUI() {
+  document.body.dataset.mode = dataMode;
+  const isRealtime = dataMode === "realtime";
+  const testBtn = $("#modeTest"), realtimeBtn = $("#modeRealtime");
+  testBtn?.classList.toggle("active", !isRealtime);
+  testBtn?.setAttribute("aria-pressed", String(!isRealtime));
+  realtimeBtn?.classList.toggle("active", isRealtime);
+  realtimeBtn?.classList.toggle("realtime-active", isRealtime);
+  realtimeBtn?.setAttribute("aria-pressed", String(isRealtime));
+  setText("#liveSourceText", isRealtime ? "ESP32 qua USB" : "Dữ liệu mô phỏng");
+  const demo = $("#demoPanel");
+  if (demo) demo.hidden = isRealtime;
+}
+
+function setConnection(kind, label) {
+  const dot = $("#connectionDot");
+  if (dot) dot.className = `conn-dot ${kind}`;
+  setText("#connectionText", label);
+}
+
+function scheduleRealtimeRender() {
+  if (realtimeRenderTimer) return;
+  realtimeRenderTimer = setTimeout(() => {
+    realtimeRenderTimer = null;
+    render();
+  }, 80);
+}
+
+function recordRealtimeFire(zoneId, wasFire, isFire, timestamp) {
+  if (!wasFire && isFire) {
+    state.fireHistory[`-serial${timestamp}-${zoneId}`] = { zone: zoneId, time_start: timestamp, time_end: null };
+  } else if (wasFire && !isFire) {
+    Object.values(state.fireHistory).forEach(entry => {
+      if (entry.zone === zoneId && !entry.time_end) entry.time_end = timestamp;
+    });
+  }
+}
+
+function applyRealtimeReading(payload) {
+  if (dataMode !== "realtime" || !ZONES.includes(payload.zone)) return;
+  const zone = state.current.zones[payload.zone];
+  const timestamp = Number(payload.timestamp) || Date.now();
+  const temperature = hasNumber(payload.temperature) ? Number(payload.temperature) : null;
+  const humidity = hasNumber(payload.humidity) ? Number(payload.humidity) : null;
+  const wasFire = !!zone.fire;
+  const isFire = temperature !== null && temperature >= TEMP_FIRE;
+  Object.assign(zone, { temperature, humidity, smoke: null, fire: isFire, online: true, lastReading: timestamp, gpio: payload.gpio ?? zone.gpio });
+  recordRealtimeFire(payload.zone, wasFire, isFire, timestamp);
+  recalcState();
+  scheduleRealtimeRender();
+}
+
+function markZoneOffline(zoneId, timestamp = Date.now()) {
+  if (!ZONES.includes(zoneId)) return;
+  const zone = state.current.zones[zoneId];
+  const wasFire = !!zone.fire;
+  Object.assign(zone, { temperature: null, humidity: null, smoke: null, fire: false, online: false });
+  recordRealtimeFire(zoneId, wasFire, false, timestamp);
+}
+
+function activateRealtimeMode() {
+  if (dataMode === "realtime") return;
+  testStateSnapshot = cloneState(state);
+  dataMode = "realtime";
+  isMockMode = false;
+  autoPlayAbort = true;
+  autoPlaying = false;
+  realtimeSource?.close();
+
+  ZONES.forEach(id => {
+    state.current.zones[id] = { temperature: null, humidity: null, smoke: null, fire: false, online: false };
+  });
+  state.fireHistory = {};
+  recalcState();
+  updateModeUI();
+  setConnection("mock", "Đang kết nối ESP32…");
+  render();
+
+  realtimeSource = new EventSource("/api/serial/events");
+  realtimeSource.addEventListener("status", event => {
+    if (dataMode !== "realtime") return;
+    const info = JSON.parse(event.data);
+    setConnection(info.connected ? "connected" : "error", info.connected ? "ESP32 đã kết nối" : (info.message || "Chưa thấy ESP32"));
+    if (!info.connected) {
+      ZONES.forEach(id => markZoneOffline(id));
+      recalcState();
+      scheduleRealtimeRender();
+    }
+  });
+  realtimeSource.addEventListener("reading", event => {
+    try { applyRealtimeReading(JSON.parse(event.data)); }
+    catch (error) { console.error("Dữ liệu ESP32 không hợp lệ:", error); }
+  });
+  realtimeSource.addEventListener("timeout", event => {
+    if (dataMode !== "realtime") return;
+    try {
+      const info = JSON.parse(event.data);
+      if (ZONES.includes(info.zone)) {
+        markZoneOffline(info.zone, Number(info.timestamp) || Date.now());
+        recalcState();
+      }
+      scheduleRealtimeRender();
+    } catch (error) { console.error("Dữ liệu timeout không hợp lệ:", error); }
+  });
+  realtimeSource.onerror = () => {
+    if (dataMode === "realtime") setConnection("error", "Không thấy Serial Bridge");
+  };
+}
+
+function activateTestMode() {
+  if (dataMode === "test") return;
+  realtimeSource?.close();
+  realtimeSource = null;
+  dataMode = "test";
+  isMockMode = true;
+  if (testStateSnapshot) state = cloneState(testStateSnapshot);
+  testStateSnapshot = null;
+  updateModeUI();
+  setConnection("mock", "Demo Mode");
+  state.current.system.lastUpdated = Date.now();
+  state.current.routes = computeRoutes(state.current.zones);
+  render();
+}
+
+// ════════════════════════════════════════════════════════════
+// 15. FIREBASE
 // ════════════════════════════════════════════════════════════
 
 async function connectFirebase() {
@@ -789,7 +938,7 @@ async function connectFirebase() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 15. EVENTS & INIT
+// 16. EVENTS & INIT
 // ════════════════════════════════════════════════════════════
 
 function updateClock() {
@@ -802,9 +951,27 @@ function checkStale() {
   if (!el) return;
   const age = Date.now() - (state.current.system.lastUpdated || 0);
   el.hidden = age <= STALE_MS;
+
+  if (dataMode === "realtime") {
+    let changed = false;
+    ZONES.forEach(id => {
+      const zone = state.current.zones[id];
+      if (zone?.online && zone.lastReading && Date.now() - zone.lastReading > SENSOR_STALE_MS) {
+        markZoneOffline(id);
+        changed = true;
+      }
+    });
+    if (changed) {
+      recalcState();
+      render();
+    }
+  }
 }
 
 function initEvents() {
+  $("#modeTest")?.addEventListener("click", activateTestMode);
+  $("#modeRealtime")?.addEventListener("click", activateRealtimeMode);
+
   // Sort toggle
   $("#sortDanger")?.addEventListener("change", () => renderSensors());
 

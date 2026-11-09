@@ -44,6 +44,7 @@ HeThongIoT/
 ├── index.html                 Dashboard
 ├── styles.css                 Giao diện và animation
 ├── app.js                     Hiển thị map, Dijkstra và demo mode
+├── serial_server.py           Cầu nối USB Serial sang dashboard realtime
 ├── firebase-config.js         Cấu hình Firebase cho web
 ├── firebase.rules.json        Rules mở dành riêng cho demo
 ├── mock-data.json             Dữ liệu Firebase mẫu
@@ -67,7 +68,26 @@ cd /home/sealorl/HeThongIoT
 python3 -m http.server 8686
 ```
 
-Mở `http://localhost:8686`. Nhấn `Ctrl+C` trong terminal để dừng web server.
+Mở `http://localhost:8686`. Nhấn `Ctrl+C` trong terminal để dừng web server. Cách này dùng được chế độ **TEST**.
+
+### Nhận nhiệt độ thật từ ESP32
+
+Sau khi ESP32 xuất hiện ở `/dev/ttyUSB0`, chạy cầu nối Serial thay cho lệnh trên:
+
+```bash
+cd /home/sealorl/HeThongIoT
+python3 serial_server.py --port 8686 --serial /dev/ttyUSB0
+```
+
+Mở `http://localhost:8686` rồi bấm **REALTIME** trên thanh đầu trang. Dashboard sẽ tự cập nhật nhiệt độ và độ ẩm của Zone A–F. Zone chưa đọc được cảm biến sẽ hiện `CHỜ DỮ LIỆU`.
+
+Nếu báo `Permission denied`, cấp quyền cổng serial một lần rồi khởi động lại WSL:
+
+```bash
+sudo usermod -aG dialout $USER
+```
+
+Không mở PlatformIO Serial Monitor cùng lúc vì mỗi cổng USB chỉ có thể được một chương trình sử dụng.
 
 Khi `window.FIREBASE_CONFIG = null`, dashboard tự chạy ở **Demo Mode**, không cần ESP32 hoặc Internet.
 
@@ -303,4 +323,3 @@ Các ngưỡng MQ-2 chỉ là giá trị khởi đầu. Cần làm nóng cảm b
 - [ ] Firebase nhận `/current` và `/fireHistory`.
 - [ ] Dashboard không báo dữ liệu cũ khi ESP32 đang hoạt động.
 - [ ] Nguồn và dây không nóng bất thường.
-

@@ -37,6 +37,10 @@
         <span>TẦNG 01</span>
       </div>
       <div class="bar-spacer"></div>
+      <div class="mode-switch anim-item" role="group" aria-label="Chọn nguồn dữ liệu">
+        <button id="modeTest" class="mode-btn active" type="button" aria-pressed="true">TEST</button>
+        <button id="modeRealtime" class="mode-btn" type="button" aria-pressed="false">REALTIME</button>
+      </div>
       <div class="connection anim-item" role="status" aria-live="polite">
         <span class="conn-dot" id="connectionDot" aria-hidden="true"></span>
         <span id="connectionText">Đang khởi động…</span>
@@ -50,6 +54,10 @@
     <main id="mainContent">
       <!-- System Health Strip -->
       <div class="health-strip" aria-label="Tổng quan hệ thống">
+        <div class="live-source" id="liveSource">
+          <span class="live-source-dot"></span>
+          <span id="liveSourceText">Dữ liệu mô phỏng</span>
+        </div>
         <div class="health-item anim-item">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           <span class="health-label">Giám sát</span>
