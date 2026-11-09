@@ -43,7 +43,7 @@ Nếu thay đổi mô hình vật lý, phải sửa topology tại cả hai nơi
 HeThongIoT/
 ├── index.html                 Dashboard
 ├── styles.css                 Giao diện và animation
-├── app.js                     Hiển thị map, Dijkstra và demo mode
+├── app.js                     Hiển thị map, Dijkstra và nhận dữ liệu realtime
 ├── serial_server.py           Cầu nối USB Serial sang dashboard realtime
 ├── firebase-config.js         Cấu hình Firebase cho web
 ├── firebase.rules.json        Rules mở dành riêng cho demo
@@ -59,27 +59,18 @@ HeThongIoT/
     └── WIRING.md              Bảng đấu dây và thứ tự LED
 ```
 
-## 4. Chạy nhanh dashboard
+## 4. Chạy dashboard
 
-Yêu cầu: Python 3 và một trình duyệt hiện đại.
+Yêu cầu: Python 3 và một trình duyệt hiện đại. Dashboard chỉ nhận dữ liệu thật từ ESP32 qua USB Serial.
 
-```bash
-cd /home/sealorl/HeThongIoT
-python3 -m http.server 8686
-```
-
-Mở `http://localhost:8686`. Nhấn `Ctrl+C` trong terminal để dừng web server. Cách này dùng được chế độ **TEST**.
-
-### Nhận nhiệt độ thật từ ESP32
-
-Sau khi ESP32 xuất hiện ở `/dev/ttyUSB0`, chạy cầu nối Serial thay cho lệnh trên:
+Sau khi ESP32 xuất hiện ở `/dev/ttyUSB0`, chạy cầu nối Serial:
 
 ```bash
 cd /home/sealorl/HeThongIoT
 python3 serial_server.py --port 8686 --serial /dev/ttyUSB0
 ```
 
-Mở `http://localhost:8686` rồi bấm **REALTIME** trên thanh đầu trang. Dashboard sẽ tự cập nhật nhiệt độ và độ ẩm của Zone A–F. Zone chưa đọc được cảm biến sẽ hiện `CHỜ DỮ LIỆU`.
+Mở `http://localhost:8686`. Dashboard tự cập nhật nhiệt độ và độ ẩm của Zone A–F. Zone chưa đọc được cảm biến sẽ hiện `CHỜ DỮ LIỆU`. Nhấn `Ctrl+C` trong terminal để dừng server.
 
 Nếu báo `Permission denied`, cấp quyền cổng serial một lần rồi khởi động lại WSL:
 
@@ -88,19 +79,6 @@ sudo usermod -aG dialout $USER
 ```
 
 Không mở PlatformIO Serial Monitor cùng lúc vì mỗi cổng USB chỉ có thể được một chương trình sử dụng.
-
-Khi `window.FIREBASE_CONFIG = null`, dashboard tự chạy ở **Demo Mode**, không cần ESP32 hoặc Internet.
-
-### Thử các tình huống cháy
-
-Trong phần “Bảng điều khiển demo”:
-
-- Bấm `Zone A–F` để bật/tắt cháy từng khu vực.
-- `KB1` mô phỏng cháy tại B.
-- `KB2` mô phỏng cháy tại hành lang C và kiểm tra đổi tuyến.
-- `KB3` mô phỏng nhiều điểm cháy.
-- `Khôi phục an toàn` xóa toàn bộ cảnh báo.
-- `Phát demo tự động` chạy chuỗi trình diễn.
 
 Trên bản đồ, mọi zone đều có mũi tên chỉ hướng cùng lúc. Click một zone chỉ làm nổi bật đường đầy đủ của zone đó; các hướng dẫn khác không bị thay đổi.
 
@@ -283,14 +261,14 @@ Các ngưỡng MQ-2 chỉ là giá trị khởi đầu. Cần làm nóng cảm b
 
 ### Dashboard không mở
 
-- Kiểm tra terminal còn chạy `python3 -m http.server 8686`.
+- Kiểm tra terminal còn chạy `python3 serial_server.py`.
 - Mở đúng `http://localhost:8686`, không mở trực tiếp file HTML.
-- Nếu cổng bận, chọn cổng khác, ví dụ `python3 -m http.server 8687`.
+- Nếu cổng bận, chọn cổng khác, ví dụ `python3 serial_server.py --port 8687 --serial /dev/ttyUSB0`.
 
-### Dashboard chỉ hiện Demo Mode
+### Dashboard báo "Không thấy Serial Bridge" hoặc "CHỜ DỮ LIỆU"
 
-- Kiểm tra `firebase-config.js` không còn là `null`.
-- Kiểm tra `databaseURL` và rules Firebase.
+- Kiểm tra `serial_server.py` đang chạy và đúng cổng `--serial`.
+- Kiểm tra ESP32 đã cắm USB và không có chương trình khác chiếm cổng.
 - Mở Developer Tools của trình duyệt để xem lỗi trong Console.
 
 ### ESP32 không lên Firebase

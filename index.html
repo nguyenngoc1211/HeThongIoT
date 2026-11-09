@@ -37,10 +37,6 @@
         <span>TẦNG 01</span>
       </div>
       <div class="bar-spacer"></div>
-      <div class="mode-switch anim-item" role="group" aria-label="Chọn nguồn dữ liệu">
-        <button id="modeTest" class="mode-btn active" type="button" aria-pressed="true">TEST</button>
-        <button id="modeRealtime" class="mode-btn" type="button" aria-pressed="false">REALTIME</button>
-      </div>
       <div class="connection anim-item" role="status" aria-live="polite">
         <span class="conn-dot" id="connectionDot" aria-hidden="true"></span>
         <span id="connectionText">Đang khởi động…</span>
@@ -56,7 +52,7 @@
       <div class="health-strip" aria-label="Tổng quan hệ thống">
         <div class="live-source" id="liveSource">
           <span class="live-source-dot"></span>
-          <span id="liveSourceText">Dữ liệu mô phỏng</span>
+          <span id="liveSourceText">ESP32 qua USB</span>
         </div>
         <div class="health-item anim-item">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -158,51 +154,6 @@
           <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div id="historyContent" class="history-body"></div>
-      </section>
-
-      <!-- DEMO PANEL -->
-      <section class="glass-panel demo-section" id="demoPanel" hidden>
-        <div class="panel-head">
-          <span class="tag tag-demo">CHẾ ĐỘ MÔ PHỎNG</span>
-          <h3>Bảng điều khiển demo</h3>
-        </div>
-        <p class="demo-desc">Bật/tắt cháy tại từng zone hoặc chạy kịch bản mẫu. Tuyến thoát hiểm sẽ tự tính lại.</p>
-        <div class="demo-grid">
-          <div class="demo-group">
-            <span class="demo-group-label">Mô phỏng cháy</span>
-            <div class="demo-zone-btns" id="demoZones" role="group" aria-label="Bật/tắt cháy"></div>
-          </div>
-          <div class="demo-group">
-            <span class="demo-group-label">Kịch bản mẫu</span>
-            <div class="demo-scenario-btns">
-              <button class="demo-btn scenario" data-scenario="1" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                KB1: Cháy tại B
-              </button>
-              <button class="demo-btn scenario" data-scenario="2" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                KB2: Chặn hành lang C
-              </button>
-              <button class="demo-btn scenario" data-scenario="3" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                KB3: Nhiều điểm cháy
-              </button>
-            </div>
-          </div>
-          <div class="demo-group">
-            <span class="demo-group-label">Điều khiển</span>
-            <div class="demo-control-btns">
-              <button class="demo-btn clear" id="demoClearBtn" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
-                Khôi phục an toàn
-              </button>
-              <button class="demo-btn auto" id="demoAutoBtn" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-                Phát demo tự động
-              </button>
-            </div>
-          </div>
-        </div>
       </section>
     </main>
 

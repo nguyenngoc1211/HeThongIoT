@@ -7,7 +7,7 @@
  * 2. State
  * 3. Utilities
  * 4. Dijkstra
- * 5. Data normalization
+ * 5. State recalculation
  * 6. Render: System status
  * 7. Render: SVG Map (rooms, edges, nodes, particles)
  * 8. Render: Route panel
@@ -15,9 +15,8 @@
  * 10. Render: Sensor grid
  * 11. Render: History
  * 12. Tooltip
- * 13. Demo engine (scenarios, auto-play, gradual fire)
- * 14. Firebase
- * 15. Events & Init
+ * 13. Live serial mode (ESP32 -> serial_server.py -> SSE)
+ * 14. Events & Init
  */
 
 // ════════════════════════════════════════════════════════════
@@ -62,15 +61,10 @@ const SENSOR_STALE_MS = 7000;
 
 // Chỉ dùng để kiểm tra chi tiết trên dashboard, không phải điểm xuất phát của hệ thống.
 let selectedZone = null;
-let isMockMode = false;
-let autoPlaying = false;
-let autoPlayAbort = false;
 let particleRAF = null;
 let particles = [];
 let previousValues = {};
-let dataMode = "test";
 let realtimeSource = null;
-let testStateSnapshot = null;
 let realtimeRenderTimer = null;
 
 let state = {
@@ -97,8 +91,6 @@ function formatTime(ts) { if (!ts) return "--:--"; const d = new Date(ts); retur
 function formatDate(ts) { if (!ts) return "--"; const d = new Date(ts); return isNaN(d) ? "--" : d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }); }
 function formatDT(ts) { return ts ? `${formatDate(ts)} ${formatTime(ts)}` : "--"; }
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-function wait(ms) { return new Promise(r => { const id = setTimeout(r, ms); if (autoPlayAbort) { clearTimeout(id); r(); } }); }
-function cloneState(value) { return typeof structuredClone === "function" ? structuredClone(value) : JSON.parse(JSON.stringify(value)); }
 function hasNumber(value) { return value !== null && value !== "" && Number.isFinite(Number(value)); }
 
 // ════════════════════════════════════════════════════════════
@@ -131,30 +123,6 @@ function computeRoutes(zones) {
     routes[start] = { status: blocked.has(start) ? "FIRE" : "AVAILABLE", exit: ex, cost: dist[ex], nodes: path };
   }
   return routes;
-}
-
-// ════════════════════════════════════════════════════════════
-// 5. NORMALIZE
-// ════════════════════════════════════════════════════════════
-
-function normalize(data) {
-  const sys = data?.current?.system || state.current.system;
-  const zones = data?.current?.zones || {};
-  const routes = data?.current?.routes || {};
-  const hist = data?.fireHistory || {};
-  ZONES.forEach(id => { if (!zones[id]) zones[id] = { temperature: 0, smoke: 0, fire: false }; });
-  const calculated = computeRoutes(zones);
-  const completeRoutes = {};
-  ZONES.forEach(id => {
-    const incoming = routes[id];
-    // Tương thích firmware cũ từng trả route rỗng cho chính zone cháy.
-    completeRoutes[id] = incoming && (!zones[id].fire || incoming.nodes?.length > 1) ? incoming : calculated[id];
-  });
-  state = {
-    current: { system: { status: sys.status || "SAFE", lastUpdated: sys.lastUpdated || Date.now() }, zones, routes: completeRoutes },
-    fireHistory: hist,
-  };
-  render();
 }
 
 function recalcState() {
@@ -471,7 +439,7 @@ function renderZoneDetail() {
   const sCls = fire || smoke >= SMOKE_FIRE ? "danger" : hiS ? "warn" : "safe";
 
   let statusCls, statusText;
-  if (dataMode === "realtime" && !d.online) { statusCls = "warn"; statusText = d.lastReading ? "MẤT KẾT NỐI" : "CHỜ DỮ LIỆU"; }
+  if (!d.online) { statusCls = "warn"; statusText = d.lastReading ? "MẤT KẾT NỐI" : "CHỜ DỮ LIỆU"; }
   else if (fire) { statusCls = "fire"; statusText = "CHÁY"; }
   else if (hiT || hiS) { statusCls = "warn"; statusText = "CẢNH BÁO"; }
   else { statusCls = "safe"; statusText = "AN TOÀN"; }
@@ -480,7 +448,6 @@ function renderZoneDetail() {
     <div class="zd-row"><span class="zd-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>Nhiệt độ</span><span class="zd-value${hiT || fire ? " high" : ""} mono">${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</span></div>
     <div class="zd-gauge"><div class="zd-gauge-fill ${tCls}" style="width:${tPct}%"></div></div>
     <div class="zd-row"><span class="zd-label">Độ ẩm</span><span class="zd-value mono">${humidityAvailable ? `${humidity.toFixed(1)}%` : "--"}</span></div>
-    ${dataMode === "test" ? `<div class="zd-row"><span class="zd-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 14s1.5 2 4 2 4-2 4-2"/><path d="M8 9s1.5 2 4 2 4-2 4-2"/><path d="M8 19s1.5 2 4 2 4-2 4-2"/></svg>ADC Khói</span><span class="zd-value${hiS || fire ? " high" : ""} mono">${smoke}</span></div><div class="zd-gauge"><div class="zd-gauge-fill ${sCls}" style="width:${sPct}%"></div></div>` : ""}
     <div style="margin-top:8px"><span class="zd-status ${statusCls}">${statusText}</span></div>
   `;
 }
@@ -508,7 +475,7 @@ function renderSensors() {
     const tempAvailable = hasNumber(d.temperature), smokeAvailable = hasNumber(d.smoke), humidityAvailable = hasNumber(d.humidity);
     const temp = tempAvailable ? Number(d.temperature) : 0, smoke = smokeAvailable ? Number(d.smoke) : 0, humidity = humidityAvailable ? Number(d.humidity) : 0, fire = !!d.fire;
     const hiT = temp >= TEMP_WARN, hiS = smoke >= SMOKE_WARN, isWarn = (hiT || hiS) && !fire;
-    const offline = dataMode === "realtime" && !d.online;
+    const offline = !d.online;
 
     let cardCls = "sensor-card", badgeCls = "sb-safe", badgeText = "AN TOÀN";
     if (offline) { cardCls += " s-offline"; badgeCls = "sb-offline"; badgeText = d.lastReading ? "MẤT KẾT NỐI" : "CHỜ DỮ LIỆU"; }
@@ -519,7 +486,6 @@ function renderSensors() {
       <span class="sensor-id">${escapeHtml(id)}</span>
       <span class="sensor-val${hiT || fire ? " val-high" : ""}">Nhiệt độ: ${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</span>
       <span class="sensor-val">Độ ẩm: ${humidityAvailable ? `${humidity.toFixed(1)}%` : "--"}</span>
-      ${dataMode === "test" ? `<span class="sensor-val${hiS || fire ? " val-high" : ""}">Khói: ${smoke}</span>` : ""}
       <span class="sensor-badge ${badgeCls}">${badgeText}</span>
     </article>`;
   }
@@ -571,7 +537,6 @@ function render() {
   renderZoneDetail();
   renderSensors();
   renderHistory();
-  if (isMockMode) renderDemoZones();
 }
 
 function selectZone(id) {
@@ -595,9 +560,7 @@ function showTooltip(zoneId, event) {
 
   tip.innerHTML = `<div class="tt-zone">Zone ${escapeHtml(zoneId)}</div>
     <div class="tt-row"><span>Nhiệt độ</span><strong>${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</strong></div>
-    ${dataMode === "realtime"
-      ? `<div class="tt-row"><span>Độ ẩm</span><strong>${humidityAvailable ? `${Number(d.humidity).toFixed(1)}%` : "--"}</strong></div>`
-      : `<div class="tt-row"><span>ADC Khói</span><strong>${smoke}</strong></div>`}
+    <div class="tt-row"><span>Độ ẩm</span><strong>${humidityAvailable ? `${Number(d.humidity).toFixed(1)}%` : "--"}</strong></div>
     <div class="tt-status ${statusCls}">${status}</div>`;
   tip.hidden = false;
   moveTooltip(event);
@@ -630,174 +593,8 @@ function hideTooltip() {
 }
 
 // ════════════════════════════════════════════════════════════
-// 13. DEMO ENGINE
+// 13. LIVE SERIAL MODE (ESP32 -> serial_server.py -> SSE)
 // ════════════════════════════════════════════════════════════
-
-function initMockMode() {
-  dataMode = "test";
-  isMockMode = true;
-  const dot = $("#connectionDot");
-  if (dot) dot.className = "conn-dot mock";
-  setText("#connectionText", "Demo Mode");
-  const dp = $("#demoPanel");
-  if (dp) { dp.hidden = false; renderDemoZones(); }
-  state.current.system.lastUpdated = Date.now();
-  state.current.routes = computeRoutes(state.current.zones);
-  updateModeUI();
-  render();
-}
-
-function renderDemoZones() {
-  const c = $("#demoZones");
-  if (!c) return;
-  let h = "";
-  for (const id of ZONES) {
-    const fire = !!state.current.zones[id]?.fire;
-    h += `<button class="demo-btn demo-zone${fire ? " active" : ""}" data-zone="${id}" type="button" aria-label="Toggle cháy Zone ${id}" aria-pressed="${fire}"><span class="dz-dot"></span>Zone ${id}</button>`;
-  }
-  c.innerHTML = h;
-  c.querySelectorAll(".demo-zone").forEach(btn => btn.addEventListener("click", () => toggleFire(btn.dataset.zone)));
-}
-
-function toggleFire(zoneId) {
-  const z = state.current.zones[zoneId];
-  if (!z) return;
-  z.fire = !z.fire;
-  if (z.fire) {
-    z.temperature = 60 + Math.random() * 25;
-    z.smoke = 2000 + Math.floor(Math.random() * 1000);
-    state.fireHistory[`-mock${Date.now()}`] = { zone: zoneId, time_start: Date.now(), time_end: null };
-  } else {
-    z.temperature = 28 + Math.random() * 4;
-    z.smoke = 100 + Math.floor(Math.random() * 40);
-    Object.values(state.fireHistory).forEach(e => { if (e.zone === zoneId && !e.time_end) e.time_end = Date.now(); });
-  }
-  recalcState();
-  render();
-}
-
-function clearAllFires() {
-  ZONES.forEach(id => {
-    const z = state.current.zones[id];
-    if (z?.fire) {
-      z.fire = false; z.temperature = 28 + Math.random() * 4; z.smoke = 100 + Math.floor(Math.random() * 40);
-      Object.values(state.fireHistory).forEach(e => { if (e.zone === id && !e.time_end) e.time_end = Date.now(); });
-    }
-  });
-  recalcState();
-  render();
-}
-
-// ── Gradual fire simulation ──
-async function gradualFire(zoneId, duration = 2500) {
-  const z = state.current.zones[zoneId];
-  if (!z || z.fire) return;
-  const startT = z.temperature, startS = z.smoke;
-  const targetT = 58 + Math.random() * 25, targetS = 1900 + Math.random() * 1100;
-  const t0 = performance.now();
-  let fired = false;
-
-  return new Promise(resolve => {
-    function step() {
-      if (autoPlayAbort) { resolve(); return; }
-      const p = clamp((performance.now() - t0) / duration, 0, 1);
-      const e = p < 0.5 ? 2 * p * p : 1 - ((-2 * p + 2) ** 2) / 2;
-      z.temperature = startT + (targetT - startT) * e;
-      z.smoke = Math.round(startS + (targetS - startS) * e);
-      if (p >= 0.65 && !fired) {
-        fired = true;
-        z.fire = true;
-        state.fireHistory[`-mock${Date.now()}`] = { zone: zoneId, time_start: Date.now(), time_end: null };
-        recalcState();
-      }
-      render();
-      if (p < 1) requestAnimationFrame(step); else resolve();
-    }
-    requestAnimationFrame(step);
-  });
-}
-
-// ── Scenarios ──
-async function runScenario(num) {
-  if (autoPlaying) return;
-  clearAllFires();
-  await wait(400);
-  if (num === 1) {
-    selectZone("B");
-    await gradualFire("B", 2500);
-  } else if (num === 2) {
-    selectZone("A");
-    await gradualFire("C", 2500);
-    await wait(500);
-    selectZone("A");
-    render();
-  } else if (num === 3) {
-    selectZone("A");
-    await gradualFire("B", 2000);
-    await wait(600);
-    await gradualFire("D", 2000);
-    await wait(600);
-    selectZone("E");
-    render();
-  }
-}
-
-// ── Auto-play demo ──
-async function autoPlayDemo() {
-  if (autoPlaying) { autoPlayAbort = true; return; }
-  autoPlaying = true;
-  autoPlayAbort = false;
-  const btn = $("#demoAutoBtn");
-  if (btn) { btn.classList.add("running"); btn.querySelector("svg + *")?.remove(); }
-
-  const check = () => !autoPlayAbort;
-
-  // Step 1: All safe
-  clearAllFires(); selectZone("A"); render();
-  if (check()) await wait(2000);
-
-  // Step 2: Fire at B gradually
-  if (check()) { selectZone("B"); await gradualFire("B", 3000); }
-  if (check()) await wait(2000);
-
-  // Step 3: Select A to show rerouting
-  if (check()) { selectZone("A"); render(); }
-  if (check()) await wait(2500);
-
-  // Step 4: Also fire at C
-  if (check()) { await gradualFire("C", 2500); }
-  if (check()) await wait(1500);
-
-  // Step 5: Select E, show rerouting
-  if (check()) { selectZone("E"); render(); }
-  if (check()) await wait(2500);
-
-  // Step 6: Clear all
-  if (check()) { clearAllFires(); selectZone("A"); render(); }
-  if (check()) await wait(1500);
-
-  autoPlaying = false;
-  autoPlayAbort = false;
-  if (btn) btn.classList.remove("running");
-}
-
-// ════════════════════════════════════════════════════════════
-// 14. LIVE SERIAL MODE (ESP32 -> serial_server.py -> SSE)
-// ════════════════════════════════════════════════════════════
-
-function updateModeUI() {
-  document.body.dataset.mode = dataMode;
-  const isRealtime = dataMode === "realtime";
-  const testBtn = $("#modeTest"), realtimeBtn = $("#modeRealtime");
-  testBtn?.classList.toggle("active", !isRealtime);
-  testBtn?.setAttribute("aria-pressed", String(!isRealtime));
-  realtimeBtn?.classList.toggle("active", isRealtime);
-  realtimeBtn?.classList.toggle("realtime-active", isRealtime);
-  realtimeBtn?.setAttribute("aria-pressed", String(isRealtime));
-  setText("#liveSourceText", isRealtime ? "ESP32 qua USB" : "Dữ liệu mô phỏng");
-  const demo = $("#demoPanel");
-  if (demo) demo.hidden = isRealtime;
-}
 
 function setConnection(kind, label) {
   const dot = $("#connectionDot");
@@ -824,7 +621,7 @@ function recordRealtimeFire(zoneId, wasFire, isFire, timestamp) {
 }
 
 function applyRealtimeReading(payload) {
-  if (dataMode !== "realtime" || !ZONES.includes(payload.zone)) return;
+  if (!ZONES.includes(payload.zone)) return;
   const zone = state.current.zones[payload.zone];
   const timestamp = Number(payload.timestamp) || Date.now();
   const temperature = hasNumber(payload.temperature) ? Number(payload.temperature) : null;
@@ -846,12 +643,6 @@ function markZoneOffline(zoneId, timestamp = Date.now()) {
 }
 
 function activateRealtimeMode() {
-  if (dataMode === "realtime") return;
-  testStateSnapshot = cloneState(state);
-  dataMode = "realtime";
-  isMockMode = false;
-  autoPlayAbort = true;
-  autoPlaying = false;
   realtimeSource?.close();
 
   ZONES.forEach(id => {
@@ -859,13 +650,11 @@ function activateRealtimeMode() {
   });
   state.fireHistory = {};
   recalcState();
-  updateModeUI();
   setConnection("mock", "Đang kết nối ESP32…");
   render();
 
   realtimeSource = new EventSource("/api/serial/events");
   realtimeSource.addEventListener("status", event => {
-    if (dataMode !== "realtime") return;
     const info = JSON.parse(event.data);
     setConnection(info.connected ? "connected" : "error", info.connected ? "ESP32 đã kết nối" : (info.message || "Chưa thấy ESP32"));
     if (!info.connected) {
@@ -879,7 +668,6 @@ function activateRealtimeMode() {
     catch (error) { console.error("Dữ liệu ESP32 không hợp lệ:", error); }
   });
   realtimeSource.addEventListener("timeout", event => {
-    if (dataMode !== "realtime") return;
     try {
       const info = JSON.parse(event.data);
       if (ZONES.includes(info.zone)) {
@@ -890,55 +678,12 @@ function activateRealtimeMode() {
     } catch (error) { console.error("Dữ liệu timeout không hợp lệ:", error); }
   });
   realtimeSource.onerror = () => {
-    if (dataMode === "realtime") setConnection("error", "Không thấy Serial Bridge");
+    setConnection("error", "Không thấy Serial Bridge");
   };
 }
 
-function activateTestMode() {
-  if (dataMode === "test") return;
-  realtimeSource?.close();
-  realtimeSource = null;
-  dataMode = "test";
-  isMockMode = true;
-  if (testStateSnapshot) state = cloneState(testStateSnapshot);
-  testStateSnapshot = null;
-  updateModeUI();
-  setConnection("mock", "Demo Mode");
-  state.current.system.lastUpdated = Date.now();
-  state.current.routes = computeRoutes(state.current.zones);
-  render();
-}
-
 // ════════════════════════════════════════════════════════════
-// 15. FIREBASE
-// ════════════════════════════════════════════════════════════
-
-async function connectFirebase() {
-  if (!window.FIREBASE_CONFIG) { initMockMode(); return; }
-  try {
-    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
-    const { getDatabase, ref, onValue } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js");
-    const db = getDatabase(initializeApp(window.FIREBASE_CONFIG));
-    const dot = $("#connectionDot");
-    if (dot) dot.className = "conn-dot connected";
-    setText("#connectionText", "Đã kết nối Firebase");
-    onValue(ref(db), snap => normalize(snap.val()), err => {
-      console.error("Firebase error:", err);
-      if (dot) dot.className = "conn-dot error";
-      setText("#connectionText", "Lỗi kết nối");
-      if (!Object.keys(state.current.routes).length) initMockMode();
-    });
-  } catch (err) {
-    console.error("Firebase init failed:", err);
-    const dot = $("#connectionDot");
-    if (dot) dot.className = "conn-dot error";
-    setText("#connectionText", "Lỗi – chế độ demo");
-    initMockMode();
-  }
-}
-
-// ════════════════════════════════════════════════════════════
-// 16. EVENTS & INIT
+// 14. EVENTS & INIT
 // ════════════════════════════════════════════════════════════
 
 function updateClock() {
@@ -952,26 +697,21 @@ function checkStale() {
   const age = Date.now() - (state.current.system.lastUpdated || 0);
   el.hidden = age <= STALE_MS;
 
-  if (dataMode === "realtime") {
-    let changed = false;
-    ZONES.forEach(id => {
-      const zone = state.current.zones[id];
-      if (zone?.online && zone.lastReading && Date.now() - zone.lastReading > SENSOR_STALE_MS) {
-        markZoneOffline(id);
-        changed = true;
-      }
-    });
-    if (changed) {
-      recalcState();
-      render();
+  let changed = false;
+  ZONES.forEach(id => {
+    const zone = state.current.zones[id];
+    if (zone?.online && zone.lastReading && Date.now() - zone.lastReading > SENSOR_STALE_MS) {
+      markZoneOffline(id);
+      changed = true;
     }
+  });
+  if (changed) {
+    recalcState();
+    render();
   }
 }
 
 function initEvents() {
-  $("#modeTest")?.addEventListener("click", activateTestMode);
-  $("#modeRealtime")?.addEventListener("click", activateRealtimeMode);
-
   // Sort toggle
   $("#sortDanger")?.addEventListener("change", () => renderSensors());
 
@@ -983,13 +723,6 @@ function initEvents() {
     const collapsed = !body.classList.contains("collapsed");
     body.classList.toggle("collapsed", collapsed);
     btn.setAttribute("aria-expanded", String(!collapsed));
-  });
-
-  // Demo buttons
-  $("#demoClearBtn")?.addEventListener("click", clearAllFires);
-  $("#demoAutoBtn")?.addEventListener("click", autoPlayDemo);
-  $$(".demo-btn.scenario").forEach(btn => {
-    btn.addEventListener("click", () => runScenario(Number(btn.dataset.scenario)));
   });
 
   // Clocks & stale checks
@@ -1007,7 +740,7 @@ function init() {
     document.body.classList.add("loaded");
   });
 
-  connectFirebase();
+  activateRealtimeMode();
 }
 
 init();
