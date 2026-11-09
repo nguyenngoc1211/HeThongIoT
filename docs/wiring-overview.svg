@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="1190" viewBox="0 0 1760 1190" font-family="Segoe UI, Roboto, Arial, sans-serif">
+<rect width="1760" height="1190" fill="#ffffff"/>
+<text x="50" y="40" font-size="20" text-anchor="start" fill="#1f2937" font-weight="700">Sơ đồ đấu dây FireRoute: ESP32 + 3 × CD74HC4067</text>
+<text x="50" y="60" font-size="12" text-anchor="start" fill="#6b7280" font-weight="400">Sơ đồ logic, không theo vị trí chân thật. Đối chiếu bảng chân trong docs/WIRING.md khi lắp.</text>
+<text x="50" y="86" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">Cảm biến nhiệt độ DHT11 ×6</text>
+<rect x="560" y="70" width="200" height="1090" rx="6" fill="#eef2ff" stroke="#4338ca" stroke-width="2.4"/>
+<text x="660" y="92" font-size="14" text-anchor="middle" fill="#1f2937" font-weight="700">ESP32 DevKit V1</text>
+<text x="660" y="108" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">30 chân</text>
+<rect x="50" y="100" width="230" height="64" rx="6" fill="#fffbeb" stroke="#374151" stroke-width="1.8"/>
+<text x="62" y="124" font-size="14" text-anchor="start" fill="#1f2937" font-weight="700">DHT11 · Zone A</text>
+<text x="62" y="146" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3 · GND → GND</text>
+<line x1="280" y1="132" x2="560" y2="132" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="280" cy="132" r="4" fill="#f59e0b"/>
+<circle cx="560" cy="132" r="4" fill="#f59e0b"/>
+<text x="292" y="126" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">DATA</text>
+<text x="570" y="136" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">GPIO13</text>
+<rect x="50" y="200" width="230" height="64" rx="6" fill="#fffbeb" stroke="#374151" stroke-width="1.8"/>
+<text x="62" y="224" font-size="14" text-anchor="start" fill="#1f2937" font-weight="700">DHT11 · Zone B</text>
+<text x="62" y="246" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3 · GND → GND</text>
+<line x1="280" y1="232" x2="560" y2="232" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="280" cy="232" r="4" fill="#f59e0b"/>
+<circle cx="560" cy="232" r="4" fill="#f59e0b"/>
+<text x="292" y="226" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">DATA</text>
+<text x="570" y="236" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">GPIO14</text>
+<rect x="50" y="300" width="230" height="64" rx="6" fill="#fffbeb" stroke="#374151" stroke-width="1.8"/>
+<text x="62" y="324" font-size="14" text-anchor="start" fill="#1f2937" font-weight="700">DHT11 · Zone C</text>
+<text x="62" y="346" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3 · GND → GND</text>
+<line x1="280" y1="332" x2="560" y2="332" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="280" cy="332" r="4" fill="#f59e0b"/>
+<circle cx="560" cy="332" r="4" fill="#f59e0b"/>
+<text x="292" y="326" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">DATA</text>
+<text x="570" y="336" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">GPIO25</text>
+<rect x="50" y="400" width="230" height="64" rx="6" fill="#fffbeb" stroke="#374151" stroke-width="1.8"/>
+<text x="62" y="424" font-size="14" text-anchor="start" fill="#1f2937" font-weight="700">DHT11 · Zone D</text>
+<text x="62" y="446" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3 · GND → GND</text>
+<line x1="280" y1="432" x2="560" y2="432" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="280" cy="432" r="4" fill="#f59e0b"/>
+<circle cx="560" cy="432" r="4" fill="#f59e0b"/>
+<text x="292" y="426" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">DATA</text>
+<text x="570" y="436" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">GPIO26</text>
+<rect x="50" y="500" width="230" height="64" rx="6" fill="#fffbeb" stroke="#374151" stroke-width="1.8"/>
+<text x="62" y="524" font-size="14" text-anchor="start" fill="#1f2937" font-weight="700">DHT11 · Zone E</text>
+<text x="62" y="546" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3 · GND → GND</text>
+<line x1="280" y1="532" x2="560" y2="532" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="280" cy="532" r="4" fill="#f59e0b"/>
+<circle cx="560" cy="532" r="4" fill="#f59e0b"/>
+<text x="292" y="526" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">DATA</text>
+<text x="570" y="536" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">GPIO27</text>
+<rect x="50" y="600" width="230" height="64" rx="6" fill="#fffbeb" stroke="#374151" stroke-width="1.8"/>
+<text x="62" y="624" font-size="14" text-anchor="start" fill="#1f2937" font-weight="700">DHT11 · Zone F</text>
+<text x="62" y="646" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3 · GND → GND</text>
+<line x1="280" y1="632" x2="560" y2="632" stroke="#f59e0b" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="280" cy="632" r="4" fill="#f59e0b"/>
+<circle cx="560" cy="632" r="4" fill="#f59e0b"/>
+<text x="292" y="626" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">DATA</text>
+<text x="570" y="636" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">GPIO32</text>
+<rect x="1080" y="70" width="190" height="360" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+<text x="1175.0" y="92" font-size="14" text-anchor="middle" fill="#1f2937" font-weight="700">Mux #1 (MQ-2)</text>
+<text x="1175.0" y="108" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">CD74HC4067</text>
+<line x1="760" y1="130" x2="1080" y2="130" stroke="#3b82f6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="130" r="4" fill="#3b82f6"/>
+<circle cx="1080" cy="130" r="4" fill="#3b82f6"/>
+<text x="752" y="134" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO16</text>
+<text x="1090" y="134" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S0</text>
+<line x1="760" y1="166" x2="1080" y2="166" stroke="#3b82f6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="166" r="4" fill="#3b82f6"/>
+<circle cx="1080" cy="166" r="4" fill="#3b82f6"/>
+<text x="752" y="170" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO17</text>
+<text x="1090" y="170" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S1</text>
+<line x1="760" y1="202" x2="1080" y2="202" stroke="#3b82f6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="202" r="4" fill="#3b82f6"/>
+<circle cx="1080" cy="202" r="4" fill="#3b82f6"/>
+<text x="752" y="206" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO18</text>
+<text x="1090" y="206" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S2</text>
+<line x1="760" y1="238" x2="1080" y2="238" stroke="#3b82f6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="238" r="4" fill="#3b82f6"/>
+<circle cx="1080" cy="238" r="4" fill="#3b82f6"/>
+<text x="752" y="242" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO19</text>
+<text x="1090" y="242" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S3</text>
+<line x1="760" y1="274" x2="1080" y2="274" stroke="#8b5cf6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="274" r="4" fill="#8b5cf6"/>
+<circle cx="1080" cy="274" r="4" fill="#8b5cf6"/>
+<text x="752" y="278" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO34</text>
+<text x="1090" y="278" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">SIG</text>
+<text x="1092" y="330" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3</text>
+<text x="1092" y="348" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND → GND</text>
+<text x="1092" y="366" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">EN → GND</text>
+<text x="1380" y="78" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">Cảm biến khói MQ-2 ×6 (qua Mux #1)</text>
+<text x="1380" y="94" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 5V sạc dự phòng · GND → GND chung · DO để trống</text>
+<line x1="1270" y1="130" x2="1380" y2="130" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="130" r="4" fill="#6b7280"/>
+<text x="1258" y="134" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C0</text>
+<rect x="1380" y="109" width="340" height="42" rx="6" fill="#f3f4f6" stroke="#374151" stroke-width="1.8"/>
+<circle cx="1380" cy="130" r="4" fill="#6b7280"/>
+<text x="1392" y="127" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">MQ-2 · Zone A</text>
+<text x="1392" y="142" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">AO → 10k → C0 ; từ C0 → 10k → GND</text>
+<line x1="1270" y1="180" x2="1380" y2="180" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="180" r="4" fill="#6b7280"/>
+<text x="1258" y="184" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C1</text>
+<rect x="1380" y="159" width="340" height="42" rx="6" fill="#f3f4f6" stroke="#374151" stroke-width="1.8"/>
+<circle cx="1380" cy="180" r="4" fill="#6b7280"/>
+<text x="1392" y="177" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">MQ-2 · Zone B</text>
+<text x="1392" y="192" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">AO → 10k → C1 ; từ C1 → 10k → GND</text>
+<line x1="1270" y1="230" x2="1380" y2="230" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="230" r="4" fill="#6b7280"/>
+<text x="1258" y="234" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C2</text>
+<rect x="1380" y="209" width="340" height="42" rx="6" fill="#f3f4f6" stroke="#374151" stroke-width="1.8"/>
+<circle cx="1380" cy="230" r="4" fill="#6b7280"/>
+<text x="1392" y="227" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">MQ-2 · Zone C</text>
+<text x="1392" y="242" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">AO → 10k → C2 ; từ C2 → 10k → GND</text>
+<line x1="1270" y1="280" x2="1380" y2="280" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="280" r="4" fill="#6b7280"/>
+<text x="1258" y="284" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C3</text>
+<rect x="1380" y="259" width="340" height="42" rx="6" fill="#f3f4f6" stroke="#374151" stroke-width="1.8"/>
+<circle cx="1380" cy="280" r="4" fill="#6b7280"/>
+<text x="1392" y="277" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">MQ-2 · Zone D</text>
+<text x="1392" y="292" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">AO → 10k → C3 ; từ C3 → 10k → GND</text>
+<line x1="1270" y1="330" x2="1380" y2="330" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="330" r="4" fill="#6b7280"/>
+<text x="1258" y="334" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C4</text>
+<rect x="1380" y="309" width="340" height="42" rx="6" fill="#f3f4f6" stroke="#374151" stroke-width="1.8"/>
+<circle cx="1380" cy="330" r="4" fill="#6b7280"/>
+<text x="1392" y="327" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">MQ-2 · Zone E</text>
+<text x="1392" y="342" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">AO → 10k → C4 ; từ C4 → 10k → GND</text>
+<line x1="1270" y1="380" x2="1380" y2="380" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="380" r="4" fill="#6b7280"/>
+<text x="1258" y="384" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C5</text>
+<rect x="1380" y="359" width="340" height="42" rx="6" fill="#f3f4f6" stroke="#374151" stroke-width="1.8"/>
+<circle cx="1380" cy="380" r="4" fill="#6b7280"/>
+<text x="1392" y="377" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">MQ-2 · Zone F</text>
+<text x="1392" y="392" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">AO → 10k → C5 ; từ C5 → 10k → GND</text>
+<text x="1080" y="478" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">LED chỉ hướng ×17 (sáng = được đi), quét bằng Mux #2 và #3</text>
+<rect x="1080" y="490" width="190" height="330" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+<text x="1175.0" y="512" font-size="14" text-anchor="middle" fill="#1f2937" font-weight="700">Mux #2 (LED 1–9)</text>
+<text x="1175.0" y="528" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">CD74HC4067</text>
+<line x1="760" y1="548" x2="1080" y2="548" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="548" r="4" fill="#14b8a6"/>
+<circle cx="1080" cy="548" r="4" fill="#14b8a6"/>
+<text x="752" y="552" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO21</text>
+<text x="1090" y="552" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S0</text>
+<line x1="760" y1="580" x2="1080" y2="580" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="580" r="4" fill="#14b8a6"/>
+<circle cx="1080" cy="580" r="4" fill="#14b8a6"/>
+<text x="752" y="584" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO22</text>
+<text x="1090" y="584" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S1</text>
+<line x1="760" y1="612" x2="1080" y2="612" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="612" r="4" fill="#14b8a6"/>
+<circle cx="1080" cy="612" r="4" fill="#14b8a6"/>
+<text x="752" y="616" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO23</text>
+<text x="1090" y="616" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S2</text>
+<line x1="760" y1="644" x2="1080" y2="644" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="644" r="4" fill="#14b8a6"/>
+<circle cx="1080" cy="644" r="4" fill="#14b8a6"/>
+<text x="752" y="648" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO33</text>
+<text x="1090" y="648" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S3</text>
+<line x1="760" y1="676" x2="1080" y2="676" stroke="#ec4899" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="676" r="4" fill="#ec4899"/>
+<circle cx="1080" cy="676" r="4" fill="#ec4899"/>
+<text x="752" y="680" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO4</text>
+<text x="1090" y="680" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">SIG</text>
+<text x="1092" y="724" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3</text>
+<text x="1092" y="742" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND → GND</text>
+<text x="1092" y="760" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">EN → GND</text>
+<line x1="1270" y1="548" x2="1380" y2="548" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="548" r="4" fill="#16a34a"/>
+<text x="1258" y="552" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C0</text>
+<rect x="1380" y="536" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="548" r="6" fill="#16a34a"/>
+<text x="1408" y="552" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L1 · A → C</text>
+<line x1="1610" y1="548" x2="1640" y2="548" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="552" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="580" x2="1380" y2="580" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="580" r="4" fill="#16a34a"/>
+<text x="1258" y="584" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C1</text>
+<rect x="1380" y="568" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="580" r="6" fill="#16a34a"/>
+<text x="1408" y="584" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L2 · C → A</text>
+<line x1="1610" y1="580" x2="1640" y2="580" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="584" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="612" x2="1380" y2="612" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="612" r="4" fill="#16a34a"/>
+<text x="1258" y="616" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C2</text>
+<rect x="1380" y="600" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="612" r="6" fill="#16a34a"/>
+<text x="1408" y="616" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L3 · B → C</text>
+<line x1="1610" y1="612" x2="1640" y2="612" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="616" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="644" x2="1380" y2="644" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="644" r="4" fill="#16a34a"/>
+<text x="1258" y="648" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C3</text>
+<rect x="1380" y="632" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="644" r="6" fill="#16a34a"/>
+<text x="1408" y="648" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L4 · C → B</text>
+<line x1="1610" y1="644" x2="1640" y2="644" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="648" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="676" x2="1380" y2="676" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="676" r="4" fill="#16a34a"/>
+<text x="1258" y="680" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C4</text>
+<rect x="1380" y="664" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="676" r="6" fill="#16a34a"/>
+<text x="1408" y="680" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L5 · C → D</text>
+<line x1="1610" y1="676" x2="1640" y2="676" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="680" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="708" x2="1380" y2="708" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="708" r="4" fill="#16a34a"/>
+<text x="1258" y="712" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C5</text>
+<rect x="1380" y="696" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="708" r="6" fill="#16a34a"/>
+<text x="1408" y="712" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L6 · D → C</text>
+<line x1="1610" y1="708" x2="1640" y2="708" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="712" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="740" x2="1380" y2="740" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="740" r="4" fill="#16a34a"/>
+<text x="1258" y="744" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C6</text>
+<rect x="1380" y="728" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="740" r="6" fill="#16a34a"/>
+<text x="1408" y="744" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L7 · D → E</text>
+<line x1="1610" y1="740" x2="1640" y2="740" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="744" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="772" x2="1380" y2="772" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="772" r="4" fill="#16a34a"/>
+<text x="1258" y="776" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C7</text>
+<rect x="1380" y="760" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="772" r="6" fill="#16a34a"/>
+<text x="1408" y="776" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L8 · E → D</text>
+<line x1="1610" y1="772" x2="1640" y2="772" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="776" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="804" x2="1380" y2="804" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="804" r="4" fill="#16a34a"/>
+<text x="1258" y="808" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C8</text>
+<rect x="1380" y="792" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="804" r="6" fill="#16a34a"/>
+<text x="1408" y="808" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L9 · D → F</text>
+<line x1="1610" y1="804" x2="1640" y2="804" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="808" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<rect x="1080" y="850" width="190" height="300" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+<text x="1175.0" y="872" font-size="14" text-anchor="middle" fill="#1f2937" font-weight="700">Mux #3 (LED 10–17)</text>
+<text x="1175.0" y="888" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">CD74HC4067</text>
+<line x1="1010" y1="900" x2="1080" y2="900" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="6 4"/>
+<circle cx="1080" cy="900" r="4" fill="#14b8a6"/>
+<text x="1012" y="895" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GPIO21</text>
+<text x="1090" y="904" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S0</text>
+<line x1="1010" y1="932" x2="1080" y2="932" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="6 4"/>
+<circle cx="1080" cy="932" r="4" fill="#14b8a6"/>
+<text x="1012" y="927" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GPIO22</text>
+<text x="1090" y="936" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S1</text>
+<line x1="1010" y1="964" x2="1080" y2="964" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="6 4"/>
+<circle cx="1080" cy="964" r="4" fill="#14b8a6"/>
+<text x="1012" y="959" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GPIO23</text>
+<text x="1090" y="968" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S2</text>
+<line x1="1010" y1="996" x2="1080" y2="996" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="6 4"/>
+<circle cx="1080" cy="996" r="4" fill="#14b8a6"/>
+<text x="1012" y="991" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GPIO33</text>
+<text x="1090" y="1000" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S3</text>
+<text x="790" y="918" font-size="12" text-anchor="start" fill="#0f766e" font-weight="400">S0–S3 của Mux #3 nối chung</text>
+<text x="790" y="936" font-size="12" text-anchor="start" fill="#0f766e" font-weight="400">với S0–S3 của Mux #2</text>
+<text x="790" y="954" font-size="12" text-anchor="start" fill="#0f766e" font-weight="400">(cùng GPIO21, 22, 23, 33)</text>
+<line x1="760" y1="1028" x2="1080" y2="1028" stroke="#ec4899" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="760" cy="1028" r="4" fill="#ec4899"/>
+<circle cx="1080" cy="1028" r="4" fill="#ec4899"/>
+<text x="752" y="1032" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GPIO5</text>
+<text x="1090" y="1032" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">SIG</text>
+<text x="1092" y="1066" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3</text>
+<text x="1092" y="1084" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND → GND</text>
+<text x="1092" y="1102" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">EN → GND</text>
+<line x1="1270" y1="900" x2="1380" y2="900" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="900" r="4" fill="#16a34a"/>
+<text x="1258" y="904" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C0</text>
+<rect x="1380" y="888" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="900" r="6" fill="#16a34a"/>
+<text x="1408" y="904" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L10 · F → D</text>
+<line x1="1610" y1="900" x2="1640" y2="900" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="904" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="932" x2="1380" y2="932" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="932" r="4" fill="#16a34a"/>
+<text x="1258" y="936" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C1</text>
+<rect x="1380" y="920" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="932" r="6" fill="#16a34a"/>
+<text x="1408" y="936" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L11 · C → G1</text>
+<line x1="1610" y1="932" x2="1640" y2="932" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="936" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="964" x2="1380" y2="964" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="964" r="4" fill="#16a34a"/>
+<text x="1258" y="968" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C2</text>
+<rect x="1380" y="952" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="964" r="6" fill="#16a34a"/>
+<text x="1408" y="968" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L12 · F → G2</text>
+<line x1="1610" y1="964" x2="1640" y2="964" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="968" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="996" x2="1380" y2="996" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="996" r="4" fill="#16a34a"/>
+<text x="1258" y="1000" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C3</text>
+<rect x="1380" y="984" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="996" r="6" fill="#16a34a"/>
+<text x="1408" y="1000" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L13 · A → E</text>
+<line x1="1610" y1="996" x2="1640" y2="996" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="1000" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="1028" x2="1380" y2="1028" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="1028" r="4" fill="#16a34a"/>
+<text x="1258" y="1032" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C4</text>
+<rect x="1380" y="1016" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="1028" r="6" fill="#16a34a"/>
+<text x="1408" y="1032" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L14 · E → A</text>
+<line x1="1610" y1="1028" x2="1640" y2="1028" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="1032" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="1060" x2="1380" y2="1060" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="1060" r="4" fill="#16a34a"/>
+<text x="1258" y="1064" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C5</text>
+<rect x="1380" y="1048" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="1060" r="6" fill="#16a34a"/>
+<text x="1408" y="1064" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L15 · B → F</text>
+<line x1="1610" y1="1060" x2="1640" y2="1060" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="1064" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="1092" x2="1380" y2="1092" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="1092" r="4" fill="#16a34a"/>
+<text x="1258" y="1096" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C6</text>
+<rect x="1380" y="1080" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="1092" r="6" fill="#16a34a"/>
+<text x="1408" y="1096" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L16 · F → B</text>
+<line x1="1610" y1="1092" x2="1640" y2="1092" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="1096" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<line x1="1270" y1="1124" x2="1380" y2="1124" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="1270" cy="1124" r="4" fill="#16a34a"/>
+<text x="1258" y="1128" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">C7</text>
+<rect x="1380" y="1112" width="230" height="24" rx="5" fill="#f0fdf4" stroke="#15803d" stroke-width="1.4"/>
+<circle cx="1394" cy="1124" r="6" fill="#16a34a"/>
+<text x="1408" y="1128" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">L17 · E → G1</text>
+<line x1="1610" y1="1124" x2="1640" y2="1124" stroke="#111827" stroke-width="1.8" stroke-linecap="round"/>
+<text x="1646" y="1128" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND</text>
+<rect x="50" y="760" width="230" height="250" rx="6" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.8"/>
+<text x="62" y="784" font-size="13" text-anchor="start" fill="#1f2937" font-weight="700">Nguồn &amp; GND chung</text>
+<text x="62" y="810" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">• ESP32: cấp bằng USB (có Serial)</text>
+<text x="62" y="830" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">• ESP32 3V3 → VCC của DHT11 ×6</text>
+<text x="62" y="850" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">   và CD74HC4067 ×3</text>
+<text x="62" y="870" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">• Sạc dự phòng 5V → VCC MQ-2 ×6</text>
+<text x="62" y="890" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">• GND ESP32 = GND sạc dự phòng</text>
+<text x="62" y="910" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">   = GND của mọi module</text>
+<text x="62" y="930" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">• Không nối 5V vào VIN khi cắm USB</text>
+<rect x="50" y="1040" width="400" height="135" rx="6" fill="#ffffff" stroke="#9ca3af" stroke-width="1.2"/>
+<line x1="62" y1="1062" x2="102" y2="1062" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+<text x="112" y="1066" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">DATA của DHT11 → GPIO</text>
+<line x1="62" y1="1079" x2="102" y2="1079" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+<text x="112" y="1083" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">Chọn kênh Mux #1 (S0–S3)</text>
+<line x1="62" y1="1096" x2="102" y2="1096" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/>
+<text x="112" y="1100" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">Tín hiệu MQ-2 về GPIO34 (SIG)</text>
+<line x1="62" y1="1113" x2="102" y2="1113" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/>
+<text x="112" y="1117" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">Kênh Cn của Mux #1 → MQ-2 (qua cầu chia áp)</text>
+<line x1="62" y1="1130" x2="102" y2="1130" stroke="#14b8a6" stroke-width="3" stroke-linecap="round"/>
+<text x="112" y="1134" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">Chọn kênh Mux #2 và #3 (dùng chung)</text>
+<line x1="62" y1="1147" x2="102" y2="1147" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
+<text x="112" y="1151" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">Chân SIG cấp tín hiệu cho LED</text>
+<line x1="62" y1="1164" x2="102" y2="1164" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+<text x="112" y="1168" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">Kênh Cn → LED (cathode → GND)</text>
+</svg>

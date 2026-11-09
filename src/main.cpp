@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <DHTesp.h>
-#include <Adafruit_NeoPixel.h>
 #include <HTTPClient.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
@@ -17,8 +16,13 @@ constexpr uint8_t EDGE_COUNT = 10;
 constexpr uint8_t DHT_PINS[ZONE_COUNT] = {13, 14, 25, 26, 27, 32};
 constexpr uint8_t MUX_SELECT_PINS[4] = {16, 17, 18, 19};
 constexpr uint8_t MUX_SIGNAL_PIN = 34;  // ADC1: hoạt động cả khi Wi-Fi bật.
-constexpr uint8_t LED_PIN = 23;
-constexpr uint8_t LED_COUNT = EDGE_COUNT * 2;  // Một pixel cho mỗi chiều của cửa.
+// Hai CD74HC4067 quét 17 LED: mux #2 giữ LED 1-9, mux #3 giữ LED 10-17.
+// Hai mux dùng chung 4 chân chọn kênh, mỗi mux có một chân SIG riêng.
+constexpr uint8_t LED_SELECT_PINS[4] = {21, 22, 23, 33};
+constexpr uint8_t LED_SIG_PINS[2] = {4, 5};
+constexpr uint8_t LED_MUX_COUNT = 2;
+constexpr uint8_t LED_PER_MUX = 9;
+constexpr uint8_t LED_COUNT = 17;  // Mỗi chiều đi vào tòa nhà một LED; bỏ chiều từ cửa thoát vào trong.
 
 constexpr float FIRE_TEMP_C = 55.0F;
 constexpr float SAFE_TEMP_C = 48.0F;
@@ -66,7 +70,7 @@ struct Route {
 };
 
 DHTesp dht[Config::ZONE_COUNT];
-Adafruit_NeoPixel leds(Config::LED_COUNT, Config::LED_PIN, NEO_GRB + NEO_KHZ800);
+volatile bool ledOn[Config::LED_COUNT]{};
 ZoneData zones[Config::ZONE_COUNT];
 Route routes[Config::ZONE_COUNT];
 bool manualFire[Config::ZONE_COUNT]{};
@@ -167,18 +171,33 @@ bool routeUsesDirection(Node from, Node to) {
   return false;
 }
 
+// LED sáng = chiều đó được đi; tắt = không được đi.
+// Thứ tự LED khớp bảng trong docs/WIRING.md.
 void updateLeds() {
-  const uint32_t green = leds.Color(0, 90, 25);
-  const uint32_t red = leds.Color(150, 0, 0);
-  const uint32_t off = leds.Color(0, 0, 0);
+  uint8_t led = 0;
   for (uint8_t i = 0; i < Config::EDGE_COUNT; ++i) {
     const Edge& edge = EDGES[i];
-    leds.setPixelColor(i * 2, routeUsesDirection(edge.from, edge.to) ? green : red);
+    ledOn[led++] = routeUsesDirection(edge.from, edge.to);
     // Không cần mũi tên đi từ cửa thoát ngược vào tòa nhà.
-    leds.setPixelColor(i * 2 + 1, isExit(edge.to) ? off : (routeUsesDirection(edge.to, edge.from) ? green : red));
+    if (!isExit(edge.to)) ledOn[led++] = routeUsesDirection(edge.to, edge.from);
   }
-  leds.show();
   routesDirty = false;
+}
+
+// Chạy ở core 0: lần lượt chọn từng kênh và cấp tín hiệu cho LED của kênh đó.
+void ledScanTask(void*) {
+  for (;;) {
+    for (uint8_t channel = 0; channel < Config::LED_PER_MUX; ++channel) {
+      for (uint8_t mux = 0; mux < Config::LED_MUX_COUNT; ++mux) digitalWrite(Config::LED_SIG_PINS[mux], LOW);
+      for (uint8_t bit = 0; bit < 4; ++bit) digitalWrite(Config::LED_SELECT_PINS[bit], (channel >> bit) & 1U);
+      delayMicroseconds(5);
+      for (uint8_t mux = 0; mux < Config::LED_MUX_COUNT; ++mux) {
+        const uint8_t led = mux * Config::LED_PER_MUX + channel;
+        if (led < Config::LED_COUNT && ledOn[led]) digitalWrite(Config::LED_SIG_PINS[mux], HIGH);
+      }
+      vTaskDelay(1);
+    }
+  }
 }
 
 bool firebaseConfigured() {
@@ -350,12 +369,14 @@ void setup() {
   analogReadResolution(12);
   for (uint8_t pin : Config::MUX_SELECT_PINS) pinMode(pin, OUTPUT);
   for (uint8_t zone = 0; zone < Config::ZONE_COUNT; ++zone) dht[zone].setup(Config::DHT_PINS[zone], DHTesp::DHT11);
-  leds.begin();
-  leds.setBrightness(80);
-  leds.clear();
-  leds.show();
+  for (uint8_t pin : Config::LED_SELECT_PINS) pinMode(pin, OUTPUT);
+  for (uint8_t pin : Config::LED_SIG_PINS) {
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
+  }
   calculateAllRoutes();
   updateLeds();
+  xTaskCreatePinnedToCore(ledScanTask, "ledScan", 2048, nullptr, 1, nullptr, 0);
   connectWifi();
   Serial.println("FireRoute ready. Lenh demo: FIRE B, CLEAR, AUTO");
 }

@@ -10,7 +10,7 @@ FireRoute là prototype IoT một tầng gồm 6 khu vực cảm biến (`A–F`
 2. Khi nhiệt độ hoặc khói vượt ngưỡng đủ số mẫu liên tiếp, zone được đánh dấu cháy.
 3. ESP32 tính route riêng cho **tất cả A–F**, không có một điểm xuất phát chung.
 4. Zone cháy không được dùng làm đường trung gian. Người trong chính zone cháy vẫn được chỉ dẫn đi ra.
-5. LED xanh chỉ hướng nên đi, LED đỏ chỉ hướng không được đi.
+5. LED xanh sáng ở hướng nên đi, tắt ở hướng không được đi.
 6. Trạng thái được gửi lên Firebase khoảng 15 giây/lần và gửi ngay khi có thay đổi.
 7. Dashboard hiển thị đồng thời `next-hop` của cả 6 zone. Click một zone chỉ để xem chi tiết toàn tuyến.
 
@@ -227,22 +227,24 @@ Giá trị `routes.<zone>.status`:
 
 ## 9. Đấu dây phần cứng
 
-Xem bảng đầy đủ tại `docs/WIRING.md`. Tóm tắt chân ESP32:
+Sơ đồ hình và bảng chân đầy đủ nằm ở `docs/WIRING.md` (`docs/wiring-overview.svg`, `docs/wiring-detail.svg`). Tóm tắt chân ESP32:
 
 | Chức năng | Chân ESP32 |
 |---|---|
 | DHT11 A–F | GPIO13, 14, 25, 26, 27, 32 |
-| CD74HC4067 S0–S3 | GPIO16, 17, 18, 19 |
-| CD74HC4067 SIG | GPIO34 |
-| WS2812B DATA | GPIO23 |
+| Mux #1 (MQ-2) S0–S3 | GPIO16, 17, 18, 19 |
+| Mux #1 SIG | GPIO34 |
+| Mux #2 và #3 (LED) S0–S3, nối chung | GPIO21, 22, 23, 33 |
+| Mux #2 SIG (LED 1–9) | GPIO4 |
+| Mux #3 SIG (LED 10–17) | GPIO5 |
 
 Các lưu ý bắt buộc:
 
-- Nối chung GND của ESP32, nguồn 5 V, MQ-2, multiplexer và LED.
-- Không đưa trực tiếp analog 5 V từ MQ-2 vào CD74HC4067/ESP32.
-- Dùng cầu chia áp trên từng đầu ra MQ-2 như hướng dẫn trong `docs/WIRING.md`.
-- Cấp WS2812B từ nguồn 5 V ngoài, không cấp cả dải LED qua chân nguồn yếu của board.
-- Topology hiện tại dùng 20 pixel WS2812B; thứ tự pixel nằm trong `docs/WIRING.md`.
+- Nối chung GND của ESP32, sạc dự phòng, MQ-2, 3 mux và cathode của LED.
+- Không đưa trực tiếp analog 5 V từ MQ-2 vào mux/ESP32. Mỗi AO cần cầu chia áp 10 kΩ + 10 kΩ.
+- 5 V từ sạc dự phòng chỉ cấp cho MQ-2. Không nối 5 V vào VIN của ESP32 khi đang cắm USB.
+- LED chỉ hướng là 17 LED xanh lá thường, quét bằng Mux #2 và #3. Thử 1 LED trước khi đấu hết.
+- Firmware `src/main.cpp` đã viết cho cách đấu này (quét LED bằng mux, build thành công); chưa nạp thử trên mạch thật.
 
 ## 10. Ngưỡng phát hiện mặc định
 
@@ -296,7 +298,7 @@ Các ngưỡng MQ-2 chỉ là giá trị khởi đầu. Cần làm nóng cảm b
 - [ ] Sáu DHT11 đều trả nhiệt độ hợp lệ.
 - [ ] Sáu kênh MQ-2 có ADC khác 0 và không vượt 4095.
 - [ ] Lệnh `FIRE C` làm A đổi hướng sang E và B đổi hướng sang F.
-- [ ] LED xanh/đỏ đúng chiều theo bảng pixel.
+- [ ] 17 LED sáng đúng chiều theo bảng LED trong `docs/WIRING.md`.
 - [ ] ESP32 vẫn đổi LED khi tắt Wi-Fi.
 - [ ] Firebase nhận `/current` và `/fireHistory`.
 - [ ] Dashboard không báo dữ liệu cũ khi ESP32 đang hoạt động.
