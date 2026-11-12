@@ -85,7 +85,7 @@ cd /home/sealorl/HeThongIoT
 python3 serial_server.py --port 8686 --serial /dev/ttyUSB0
 ```
 
-Mở `http://localhost:8686`. Dashboard tự cập nhật nhiệt độ và độ ẩm của Zone A–F. Zone chưa đọc được cảm biến sẽ hiện `CHỜ DỮ LIỆU`. Nhấn `Ctrl+C` trong terminal để dừng server.
+Mở `http://localhost:8686`. Dashboard tự cập nhật nhiệt độ, độ ẩm, ADC khói và trạng thái cháy của Zone A–F. Zone chưa đọc được cảm biến sẽ hiện `CHỜ DỮ LIỆU`. Nhấn `Ctrl+C` trong terminal để dừng server.
 
 Nếu báo `Permission denied`, cấp quyền cổng serial một lần rồi khởi động lại WSL:
 

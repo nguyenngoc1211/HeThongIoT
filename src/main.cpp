@@ -56,7 +56,9 @@ static_assert(Config::LED_COUNT == 2 * Config::EDGE_COUNT - Config::EXIT_COUNT,
 
 struct ZoneData {
   float temperature = 25.0F;
+  float humidity = 0.0F;
   uint16_t smoke = 0;
+  bool dhtOk = false;
   bool fire = false;
   uint8_t dangerSamples = 0;
   uint8_t safeSamples = 0;
@@ -280,11 +282,18 @@ void readSensors() {
   const bool smokeReady = millis() >= Config::MQ2_WARMUP_MS;
   for (uint8_t zone = 0; zone < Config::ZONE_COUNT; ++zone) {
     const TempAndHumidity reading = dht[zone].getTempAndHumidity();
-    if (!isnan(reading.temperature)) zones[zone].temperature = reading.temperature;
+    const bool dhtOk = dht[zone].getStatus() == 0 && !isnan(reading.temperature) &&
+                       !isnan(reading.humidity);
+    if (dhtOk) {
+      zones[zone].temperature = reading.temperature;
+      zones[zone].humidity = reading.humidity;
+    }
+    zones[zone].dhtOk = dhtOk;
     zones[zone].smoke = readMux(zone);
     evaluateZone(zone, smokeReady);
-    Serial.printf("%s: %.1f C, smoke=%u, fire=%d\n", NODE_NAMES[zone], zones[zone].temperature,
-                  zones[zone].smoke, zones[zone].fire);
+    Serial.printf("%s: %.1f C, %.1f %%, smoke=%u, fire=%d, dht=%d\n", NODE_NAMES[zone],
+                  zones[zone].temperature, zones[zone].humidity, zones[zone].smoke,
+                  zones[zone].fire, zones[zone].dhtOk ? 1 : 0);
   }
 }
 
@@ -303,7 +312,13 @@ void uploadCurrentState() {
 
   for (uint8_t zone = 0; zone < Config::ZONE_COUNT; ++zone) {
     JsonObject item = doc["zones"][NODE_NAMES[zone]].to<JsonObject>();
-    item["temperature"] = serialized(String(zones[zone].temperature, 1));
+    if (zones[zone].dhtOk) {
+      item["temperature"] = serialized(String(zones[zone].temperature, 1));
+      item["humidity"] = serialized(String(zones[zone].humidity, 1));
+    } else {
+      item["temperature"] = nullptr;
+      item["humidity"] = nullptr;
+    }
     item["smoke"] = zones[zone].smoke;
     item["fire"] = zones[zone].fire;
 

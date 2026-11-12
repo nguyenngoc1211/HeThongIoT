@@ -501,6 +501,8 @@ function renderZoneDetail() {
     <div class="zd-row"><span class="zd-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 14.76V3.5a2.5 2.5 0 00-5 0v11.26a4.5 4.5 0 105 0z"/></svg>Nhiệt độ</span><span class="zd-value${hiT || fire ? " high" : ""} mono">${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</span></div>
     <div class="zd-gauge"><div class="zd-gauge-fill ${tCls}" style="width:${tPct}%"></div></div>
     <div class="zd-row"><span class="zd-label">Độ ẩm</span><span class="zd-value mono">${humidityAvailable ? `${humidity.toFixed(1)}%` : "--"}</span></div>
+    <div class="zd-row"><span class="zd-label">Khói (ADC)</span><span class="zd-value${hiS || fire ? " high" : ""} mono">${smokeAvailable ? smoke : "--"}</span></div>
+    <div class="zd-gauge"><div class="zd-gauge-fill ${sCls}" style="width:${sPct}%"></div></div>
     <div style="margin-top:8px"><span class="zd-status ${statusCls}">${statusText}</span></div>
   `;
 }
@@ -539,6 +541,7 @@ function renderSensors() {
       <span class="sensor-id">${escapeHtml(id)}</span>
       <span class="sensor-val${hiT || fire ? " val-high" : ""}">Nhiệt độ: ${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</span>
       <span class="sensor-val">Độ ẩm: ${humidityAvailable ? `${humidity.toFixed(1)}%` : "--"}</span>
+      <span class="sensor-val${hiS || fire ? " val-high" : ""}">Khói: ${smokeAvailable ? smoke : "--"}</span>
       <span class="sensor-badge ${badgeCls}">${badgeText}</span>
     </article>`;
   }
@@ -679,9 +682,13 @@ function applyRealtimeReading(payload) {
   const timestamp = Number(payload.timestamp) || Date.now();
   const temperature = hasNumber(payload.temperature) ? Number(payload.temperature) : null;
   const humidity = hasNumber(payload.humidity) ? Number(payload.humidity) : null;
+  const smoke = hasNumber(payload.smoke) ? Number(payload.smoke) : null;
+  const explicitFire = payload.fire !== undefined && payload.fire !== null ? !!payload.fire : null;
   const wasFire = !!zone.fire;
-  const isFire = temperature !== null && temperature >= TEMP_FIRE;
-  Object.assign(zone, { temperature, humidity, smoke: null, fire: isFire, online: true, lastReading: timestamp, gpio: payload.gpio ?? zone.gpio });
+  const isFire = explicitFire !== null
+    ? explicitFire
+    : (temperature !== null && temperature >= TEMP_FIRE) || (smoke !== null && smoke >= SMOKE_FIRE);
+  Object.assign(zone, { temperature, humidity, smoke, fire: isFire, online: true, lastReading: timestamp, gpio: payload.gpio ?? zone.gpio });
   recordRealtimeFire(payload.zone, wasFire, isFire, timestamp);
   recalcState();
   scheduleRealtimeRender();

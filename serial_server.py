@@ -15,12 +15,25 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import serial
 
 
+# main.cpp: "A: 25.0 C, 60.0 %, smoke=123, fire=0, dht=1"
+MAIN_READING_RE = re.compile(
+    r"^([A-F]):\s*(-?\d+(?:\.\d+)?)\s*C,\s*(-?\d+(?:\.\d+)?)\s*%,\s*smoke=(\d+),\s*fire=([01])"
+    r"(?:,\s*dht=([01]))?\s*$",
+    re.IGNORECASE,
+)
+# main.cpp cũ chưa in độ ẩm: "A: 25.0 C, smoke=123, fire=0"
+MAIN_READING_NO_HUMIDITY_RE = re.compile(
+    r"^([A-F]):\s*(-?\d+(?:\.\d+)?)\s*C,\s*smoke=(\d+),\s*fire=([01])\s*$",
+    re.IGNORECASE,
+)
+# dht_test.cpp: "Zone A | GPIO 13 | Nhiet do: 25.0 C | Do am: 60.0 %"
 READING_RE = re.compile(
     r"Zone\s+([A-F])\s*\|\s*GPIO\s+(\d+)\s*\|.*?Nhiet do:\s*(-?\d+(?:\.\d+)?)\s*C"
     r"\s*\|\s*Do am:\s*(-?\d+(?:\.\d+)?)\s*%",
     re.IGNORECASE,
 )
 TIMEOUT_RE = re.compile(r"Zone\s+([A-F]).*(?:TIMEOUT|khong doc|loi)", re.IGNORECASE)
+GPIO_BY_ZONE = {"A": 13, "B": 14, "C": 25, "D": 26, "E": 27, "F": 32}
 
 
 class SerialHub:
@@ -73,6 +86,34 @@ class SerialHub:
                         line = raw.decode("utf-8", errors="replace").strip()
                         if not line:
                             continue
+                        reading = MAIN_READING_RE.search(line)
+                        if reading:
+                            zone, temperature, humidity, smoke, fire, dht = reading.groups()
+                            dht_ok = dht != "0"
+                            self.publish("reading", {
+                                "zone": zone.upper(),
+                                "gpio": GPIO_BY_ZONE[zone.upper()],
+                                "temperature": float(temperature) if dht_ok else None,
+                                "humidity": float(humidity) if dht_ok else None,
+                                "smoke": int(smoke),
+                                "fire": bool(int(fire)),
+                                "dht": dht_ok,
+                                "timestamp": int(time.time() * 1000),
+                            })
+                            continue
+                        reading = MAIN_READING_NO_HUMIDITY_RE.search(line)
+                        if reading:
+                            zone, temperature, smoke, fire = reading.groups()
+                            self.publish("reading", {
+                                "zone": zone.upper(),
+                                "gpio": GPIO_BY_ZONE[zone.upper()],
+                                "temperature": float(temperature),
+                                "humidity": None,
+                                "smoke": int(smoke),
+                                "fire": bool(int(fire)),
+                                "timestamp": int(time.time() * 1000),
+                            })
+                            continue
                         reading = READING_RE.search(line)
                         if reading:
                             zone, gpio, temperature, humidity = reading.groups()
@@ -81,6 +122,8 @@ class SerialHub:
                                 "gpio": int(gpio),
                                 "temperature": float(temperature),
                                 "humidity": float(humidity),
+                                "smoke": None,
+                                "fire": None,
                                 "timestamp": int(time.time() * 1000),
                             })
                             continue

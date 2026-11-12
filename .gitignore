@@ -3,3 +3,6 @@
 include/secrets.h
 *:Zone.Identifier
 
+
+__pycache__/
+*.pyc
