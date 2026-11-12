@@ -256,6 +256,8 @@ h2,h3{margin:0;font-size:15px;font-weight:700;letter-spacing:-0.2px;color:var(--
 .dot-safe{background:var(--safe);box-shadow:0 0 6px var(--safe-glow)}
 .dot-fire{background:var(--fire);box-shadow:0 0 6px var(--fire-glow)}
 .dot-exit{background:var(--exit);box-shadow:0 0 6px var(--exit-glow)}
+.dot-door{background:#f5b942;box-shadow:0 0 6px rgba(245,185,66,.5)}
+.dot-led{background:#7cffb2;box-shadow:0 0 6px rgba(124,255,178,.6)}
 .dot-route{background:var(--route);box-shadow:0 0 6px var(--route-glow)}
 
 .map-canvas{
@@ -272,9 +274,15 @@ h2,h3{margin:0;font-size:15px;font-weight:700;letter-spacing:-0.2px;color:var(--
 
 /* SVG map elements */
 .floor-rect{fill:none;stroke:var(--border);stroke-width:1;stroke-dasharray:4 4;rx:6}
-.room-area{fill:rgba(0,230,118,0.02);stroke:rgba(0,230,118,0.06);stroke-width:1;rx:8;transition:fill 0.5s,stroke 0.5s}
+.building-outline{fill:none;stroke:rgba(0,230,118,0.18);stroke-width:2}
+.room-area{fill:rgba(0,230,118,0.02);stroke:rgba(0,230,118,0.08);stroke-width:1;rx:2;transition:fill 0.5s,stroke 0.5s}
 .room-area.room-fire{fill:rgba(255,68,68,0.06);stroke:rgba(255,68,68,0.12)}
-.room-label{font-size:9px;fill:var(--text-3);font-weight:600;text-anchor:middle;letter-spacing:1px;pointer-events:none}
+.room-label{font-size:9px;fill:var(--text-3);font-weight:600;text-anchor:start;letter-spacing:1px;pointer-events:none}
+.door{fill:var(--bg-deep);stroke:#f5b942;stroke-width:2;filter:drop-shadow(0 0 4px rgba(245,185,66,.45))}
+.exit-door{fill:none;stroke:#38bdf8;stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 5px rgba(56,189,248,.65))}
+.led-dot{transition:fill .3s,opacity .3s}
+.led-dot.on{fill:#00e676;filter:drop-shadow(0 0 4px #00e676)}
+.led-dot.off{fill:#1f2b3a;stroke:rgba(0,230,118,.28);stroke-width:1}
 
 .edge-line{stroke:rgba(0,230,118,0.12);stroke-width:3;stroke-linecap:round;transition:stroke 0.5s,opacity 0.5s}
 .edge-line.blocked{stroke:rgba(255,68,68,0.15);stroke-dasharray:6 6}

@@ -1,6 +1,6 @@
 # Sơ đồ đấu dây prototype
 
-Sơ đồ dùng linh kiện thực tế của nhóm: ESP32 DevKit 30 chân, 6 DHT11, 6 MQ-2, 3 CD74HC4067, khoảng 40 LED xanh 2 chân, điện trở 10 kΩ và sạc dự phòng 5 V.
+Sơ đồ dùng linh kiện thực tế của nhóm: ESP32 DevKit 30 chân, 6 DHT11, 6 MQ-2, 3 CD74HC4067, 14 LED xanh 2 chân, điện trở 10 kΩ và sạc dự phòng 5 V. Ảnh mô hình gốc của nhóm nằm ở `docs/so_do_demo.jpg`.
 
 ![Sơ đồ tổng quan](wiring-overview.svg)
 
@@ -17,7 +17,7 @@ Sơ đồ dùng linh kiện thực tế của nhóm: ESP32 DevKit 30 chân, 6 DH
 | Mux #1 SIG (đọc MQ-2) | GPIO34 (ADC1, chỉ vào) |
 | Mux #2 và #3 S0–S3 (chọn kênh LED, nối chung) | GPIO21, 22, 23, 33 |
 | Mux #2 SIG (cấp tín hiệu LED 1–9) | GPIO4 |
-| Mux #3 SIG (cấp tín hiệu LED 10–17) | GPIO5 |
+| Mux #3 SIG (cấp tín hiệu LED 10–14) | GPIO5 |
 
 Không chân nào bị trùng. Không dùng GPIO0, 2, 12, 15 để tránh lỗi khi nạp/khởi động.
 
@@ -77,9 +77,11 @@ MQ-2 AO ──[ 10 kΩ ]──┬──→ chân Cn của mux
 - Chân DO của MQ-2 không dùng, để trống.
 - Điện áp chia đôi nên ADC đọc được chỉ bằng khoảng một nửa so với thiết kế cũ. Ngưỡng `FIRE_SMOKE_ADC = 1800` trong firmware phải hiệu chuẩn lại.
 
-## 5. LED chỉ hướng (17 LED xanh, quét bằng Mux #2 và #3)
+## 5. LED chỉ hướng (14 LED xanh, quét bằng Mux #2 và #3)
 
 LED thường không dùng chung một dây dữ liệu như WS2812B. Thiết kế này dùng hai mux để chọn từng LED, mỗi mux cấp tín hiệu cho một nhóm.
+
+Mỗi cửa trong có 2 LED, mỗi bên cửa một chiếc. Cửa thoát G1/G2 chỉ có 1 LED phía trong tòa nhà, nên tổng cộng là 14 LED.
 
 | | Mux #2 | Mux #3 |
 |---|---|---|
@@ -88,23 +90,22 @@ LED thường không dùng chung một dây dữ liệu như WS2812B. Thiết k�
 | EN | GND | GND |
 | VCC | 3V3 | 3V3 |
 | GND | GND chung | GND chung |
-| Số LED | 9 (C0–C8) | 8 (C0–C7) |
+| Số LED | 9 (C0–C8) | 5 (C0–C4) |
 
 **Mỗi LED:** anode (chân dài) → chân Cn của mux; cathode (chân ngắn) → GND chung.
+LED hướng `X → Y` đặt ở phía `X` của cửa nối `X` và `Y`.
 
 | LED | Mux, kênh | Hướng | LED | Mux, kênh | Hướng |
 |---:|---|---|---:|---|---|
-| L1 | #2 C0 | A → C | L10 | #3 C0 | F → D |
-| L2 | #2 C1 | C → A | L11 | #3 C1 | C → G1 |
-| L3 | #2 C2 | B → C | L12 | #3 C2 | F → G2 |
-| L4 | #2 C3 | C → B | L13 | #3 C3 | A → E |
-| L5 | #2 C4 | C → D | L14 | #3 C4 | E → A |
-| L6 | #2 C5 | D → C | L15 | #3 C5 | B → F |
-| L7 | #2 C6 | D → E | L16 | #3 C6 | F → B |
-| L8 | #2 C7 | E → D | L17 | #3 C7 | E → G1 |
-| L9 | #2 C8 | D → F | | | |
+| L1 | #2 C0 | A → C | L8 | #2 C7 | E → C |
+| L2 | #2 C1 | C → A | L9 | #2 C8 | D → E |
+| L3 | #2 C2 | B → C | L10 | #3 C0 | E → D |
+| L4 | #2 C3 | C → B | L11 | #3 C1 | D → F |
+| L5 | #2 C4 | B → D | L12 | #3 C2 | F → D |
+| L6 | #2 C5 | D → B | L13 | #3 C3 | A → G1 |
+| L7 | #2 C6 | C → E | L14 | #3 C4 | F → G2 |
 
-Thứ tự này giống bảng pixel cũ, bỏ ba chiều từ cửa thoát đi vào (G1 → C, G2 → F, G1 → E).
+Thứ tự LED khớp `LED_DIRECTIONS` trong `app.js` và `updateLeds()` trong `src/main.cpp`.
 
 **Cách hoạt động và giới hạn:**
 

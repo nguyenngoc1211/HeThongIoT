@@ -1,85 +1,174 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="690" viewBox="0 0 1100 690" font-family="Segoe UI, Roboto, Arial, sans-serif">
-<rect width="1100" height="690" fill="#ffffff"/>
-<text x="40" y="40" font-size="17" text-anchor="start" fill="#1f2937" font-weight="700">① Một kênh MQ-2 qua cầu chia áp (làm 6 lần cho Zone A–F)</text>
-<text x="40" y="62" font-size="12" text-anchor="start" fill="#6b7280" font-weight="400">Cầu chia áp 10 kΩ + 10 kΩ đưa 0–5 V của chân AO xuống 0–2,5 V trước khi vào mux và ESP32.</text>
-<rect x="40" y="90" width="190" height="150" rx="6" fill="#f3f4f6" stroke="#374151" stroke-width="1.8"/>
-<text x="135" y="112" font-size="13" text-anchor="middle" fill="#1f2937" font-weight="700">Module MQ-2</text>
-<text x="222" y="139" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">VCC</text>
-<circle cx="230" cy="135" r="4" fill="#6b7280"/>
-<text x="222" y="169" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">GND</text>
-<circle cx="230" cy="165" r="4" fill="#6b7280"/>
-<text x="222" y="199" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">DO</text>
-<circle cx="230" cy="195" r="4" fill="#6b7280"/>
-<text x="222" y="229" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">AO</text>
-<circle cx="230" cy="225" r="4" fill="#6b7280"/>
-<line x1="230" y1="135" x2="300" y2="135" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round"/>
-<text x="308" y="139" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">→ 5V (sạc dự phòng)</text>
-<line x1="230" y1="165" x2="300" y2="165" stroke="#111827" stroke-width="2.4" stroke-linecap="round"/>
-<text x="308" y="169" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">→ GND chung</text>
-<line x1="230" y1="195" x2="270" y2="195" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4"/>
-<text x="278" y="199" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">DO: để trống</text>
-<line x1="230" y1="225" x2="290" y2="225" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
-<rect x="290" y="215" width="60" height="20" rx="3" fill="#fff7ed" stroke="#c2410c" stroke-width="1.6"/>
-<text x="320" y="252" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">R1 = 10 kΩ</text>
-<line x1="350" y1="225" x2="700" y2="225" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
-<circle cx="440" cy="225" r="5" fill="#111827"/>
-<text x="440" y="206" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">nút chia</text>
-<text x="570" y="216" font-size="12" text-anchor="middle" fill="#1f2937" font-weight="400">0 – 2,5 V</text>
-<line x1="440" y1="225" x2="440" y2="260" stroke="#6b7280" stroke-width="2.4" stroke-linecap="round"/>
-<rect x="430" y="260" width="20" height="44" rx="3" fill="#fff7ed" stroke="#c2410c" stroke-width="1.6"/>
-<text x="462" y="286" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">R2 = 10 kΩ</text>
-<line x1="440" y1="304" x2="440" y2="330" stroke="#111827" stroke-width="2.4" stroke-linecap="round"/>
-<line x1="440" y1="330" x2="440" y2="338" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-<line x1="429" y1="338" x2="451" y2="338" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-<line x1="433" y1="343" x2="447" y2="343" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-<line x1="437" y1="348" x2="443" y2="348" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-<text x="440" y="364" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">GND</text>
-<rect x="700" y="190" width="200" height="130" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
-<text x="800" y="212" font-size="13" text-anchor="middle" fill="#1f2937" font-weight="700">Mux #1</text>
-<circle cx="700" cy="225" r="4" fill="#6b7280"/>
-<text x="710" y="229" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">C0…C5</text>
-<circle cx="900" cy="225" r="4" fill="#8b5cf6"/>
-<text x="890" y="229" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">SIG</text>
-<text x="712" y="264" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">S0–S3 ← GPIO16–19</text>
-<text x="712" y="282" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3 · EN → GND</text>
-<text x="712" y="300" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">GND → GND chung</text>
-<line x1="900" y1="225" x2="980" y2="225" stroke="#8b5cf6" stroke-width="2.4" stroke-linecap="round"/>
-<rect x="980" y="190" width="90" height="70" rx="6" fill="#eef2ff" stroke="#4338ca" stroke-width="2"/>
-<circle cx="980" cy="225" r="4" fill="#8b5cf6"/>
-<text x="1025" y="212" font-size="13" text-anchor="middle" fill="#1f2937" font-weight="700">ESP32</text>
-<text x="1025" y="246" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">GPIO34</text>
-<text x="40" y="400" font-size="17" text-anchor="start" fill="#1f2937" font-weight="700">② Một LED chỉ hướng qua Mux #2 hoặc #3 (làm 17 lần)</text>
-<text x="40" y="422" font-size="12" text-anchor="start" fill="#6b7280" font-weight="400">LED nối thẳng vào kênh Cn của mux, không dùng điện trở: dòng bị hạn chế bởi điện trở trong của mux.</text>
-<rect x="40" y="450" width="150" height="120" rx="6" fill="#eef2ff" stroke="#4338ca" stroke-width="2"/>
-<text x="115" y="472" font-size="13" text-anchor="middle" fill="#1f2937" font-weight="700">ESP32</text>
-<circle cx="190" cy="500" r="4" fill="#ec4899"/>
-<text x="182" y="504" font-size="11" text-anchor="end" fill="#1f2937" font-weight="400">GPIO4 / GPIO5</text>
-<circle cx="190" cy="540" r="4" fill="#14b8a6"/>
-<text x="182" y="544" font-size="11" text-anchor="end" fill="#1f2937" font-weight="400">GPIO21,22,23,33</text>
-<line x1="190" y1="500" x2="330" y2="500" stroke="#ec4899" stroke-width="2.4" stroke-linecap="round"/>
-<line x1="190" y1="540" x2="330" y2="540" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round"/>
-<rect x="330" y="450" width="200" height="130" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
-<text x="430" y="472" font-size="13" text-anchor="middle" fill="#1f2937" font-weight="700">Mux #2 hoặc #3</text>
-<circle cx="330" cy="500" r="4" fill="#ec4899"/>
-<text x="340" y="504" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">SIG</text>
-<circle cx="330" cy="540" r="4" fill="#14b8a6"/>
-<text x="340" y="544" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">S0–S3</text>
-<text x="340" y="568" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">VCC → 3V3 · EN, GND → GND</text>
-<circle cx="530" cy="500" r="4" fill="#16a34a"/>
-<text x="520" y="504" font-size="12" text-anchor="end" fill="#1f2937" font-weight="400">Cn</text>
-<line x1="530" y1="500" x2="620" y2="500" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
-<polygon points="620,486 620,514 652,500" fill="#bbf7d0" stroke="#15803d" stroke-width="2"/>
-<line x1="652" y1="486" x2="652" y2="514" stroke="#15803d" stroke-width="2.4" stroke-linecap="round"/>
-<line x1="652" y1="500" x2="720" y2="500" stroke="#111827" stroke-width="2.4" stroke-linecap="round"/>
-<line x1="720" y1="500" x2="720" y2="530" stroke="#111827" stroke-width="2.4" stroke-linecap="round"/>
-<line x1="720" y1="530" x2="720" y2="538" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-<line x1="709" y1="538" x2="731" y2="538" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-<line x1="713" y1="543" x2="727" y2="543" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-<line x1="717" y1="548" x2="723" y2="548" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
-<text x="720" y="564" font-size="11" text-anchor="middle" fill="#1f2937" font-weight="400">GND</text>
-<text x="620" y="476" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">anode (+), chân dài</text>
-<text x="734" y="504" font-size="11" text-anchor="start" fill="#1f2937" font-weight="400">cathode (−), chân ngắn → GND</text>
-<text x="40" y="630" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">Mux #2: C0–C8 → LED 1–9 · Mux #3: C0–C7 → LED 10–17 (xem bảng trong docs/WIRING.md).</text>
-<text x="40" y="650" font-size="12" text-anchor="start" fill="#1f2937" font-weight="400">Thử 1 LED trước khi đấu đủ 17 LED. LED xanh dương/trắng có điện áp thuận cao (~3 V) nên khó sáng với 3,3 V.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1010" viewBox="0 0 1400 1010" font-family="Segoe UI, Roboto, Arial, sans-serif">
+<rect width="1400" height="1010" fill="#ffffff"/>
+<text x="40" y="46" font-size="24" font-weight="700" fill="#1f2937" text-anchor="start">FireRoute — Chi tiết đấu dây</text>
+<text x="40" y="74" font-size="13" font-weight="400" fill="#6b7280" text-anchor="start">Cầu chia áp MQ-2 · một kênh LED qua CD74HC4067 · bảng 14 LED theo cửa</text>
+<text x="40" y="96" font-size="11" font-weight="400" fill="#6b7280" text-anchor="start" font-style="italic">Sơ đồ logic; đối chiếu bảng chân trong docs/WIRING.md và sơ đồ tổng quan docs/wiring-overview.svg.</text>
+<rect x="40" y="115" width="640" height="410" rx="10" fill="#faf5ff" stroke="#8b5cf6" stroke-width="1.4"/>
+<text x="60" y="145" font-size="15" font-weight="700" fill="#6d28d9" text-anchor="start">① MQ-2 qua cầu chia áp 10 kΩ + 10 kΩ</text>
+<rect x="70" y="180" width="230" height="220" rx="8" fill="#ffffff" stroke="#8b5cf6" stroke-width="1.8"/>
+<text x="90" y="210" font-size="14" font-weight="700" fill="#1f2937" text-anchor="start">Module MQ-2</text>
+<text x="90" y="234" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start">VCC → 5V (sạc dự phòng)</text>
+<text x="90" y="254" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start">GND → GND chung</text>
+<text x="90" y="274" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start">DO → để trống</text>
+<text x="90" y="306" font-size="12" font-weight="700" fill="#8b5cf6" text-anchor="start">AO</text>
+<text x="90" y="326" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start">0–5 V</text>
+<line x1="300" y1="306" x2="350" y2="306" stroke="#8b5cf6" stroke-width="2.4" stroke-linecap="round"/>
+<polyline points="350.0,306.0 355.8,299.0 361.7,313.0 367.5,299.0 373.3,313.0 379.2,299.0 385.0,313.0 390.8,299.0 396.7,313.0 402.5,299.0 408.3,313.0 414.2,299.0 420.0,306.0" fill="none" stroke="#1f2937" stroke-width="2.2" stroke-linejoin="round"/>
+<text x="350" y="288" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">R1 = 10 kΩ</text>
+<line x1="420" y1="306" x2="490" y2="306" stroke="#8b5cf6" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="490" cy="306" r="4.5" fill="#8b5cf6" stroke="none" stroke-width="0"/>
+<text x="462" y="288" font-size="10.5" font-weight="700" fill="#8b5cf6" text-anchor="start">0–2,5 V</text>
+<polyline points="490.0,306.0 483.0,311.8 497.0,317.7 483.0,323.5 497.0,329.3 483.0,335.2 497.0,341.0 483.0,346.8 497.0,352.7 483.0,358.5 497.0,364.3 483.0,370.2 490.0,376.0" fill="none" stroke="#1f2937" stroke-width="2.2" stroke-linejoin="round"/>
+<text x="505" y="344" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">R2 = 10 kΩ</text>
+<line x1="490" y1="376" x2="490" y2="401" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="490" y1="401" x2="490" y2="413" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/>
+<line x1="480" y1="413" x2="500" y2="413" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="484" y1="418" x2="496" y2="418" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="488" y1="423" x2="492" y2="423" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="490" y1="306" x2="560" y2="306" stroke="#8b5cf6" stroke-width="2.4" stroke-linecap="round"/>
+<text x="522" y="324" font-size="10.5" font-weight="700" fill="#8b5cf6" text-anchor="start">C0–C5</text>
+<rect x="560" y="240" width="90" height="130" rx="6" fill="#ffffff" stroke="#334155" stroke-width="1.6"/>
+<text x="605" y="268" font-size="12" font-weight="700" fill="#1f2937" text-anchor="middle">Mux #1</text>
+<text x="605" y="288" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">CD74HC4067</text>
+<text x="605" y="316" font-size="10" font-weight="600" fill="#8b5cf6" text-anchor="middle">SIG</text>
+<text x="605" y="338" font-size="9.5" font-weight="400" fill="#6b7280" text-anchor="middle">→ GPIO34</text>
+<line x1="560" y1="306" x2="560" y2="306" stroke="#8b5cf6" stroke-width="2.4" stroke-linecap="round"/>
+<text x="70" y="450" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start" font-style="italic">Điện áp 0–5 V ở AO còn 0–2,5 V trước khi vào mux và ADC ESP32.</text>
+<text x="70" y="470" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start" font-style="italic">Cần 12 điện trở 10 kΩ cho 6 kênh MQ-2 (mỗi kênh 2 điện trở).</text>
+<text x="70" y="500" font-size="10.5" font-weight="600" fill="#dc2626" text-anchor="start">Lưu ý: MQ-2 cần làm nóng ~20 giây; ADC nền phải hiệu chuẩn lại.</text>
+<rect x="720" y="115" width="640" height="410" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.4"/>
+<text x="740" y="145" font-size="15" font-weight="700" fill="#15803d" text-anchor="start">② Một LED chỉ hướng qua CD74HC4067</text>
+<rect x="760" y="190" width="150" height="110" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="835" y="218" font-size="14" font-weight="700" fill="#1d4ed8" text-anchor="middle">ESP32</text>
+<text x="835" y="240" font-size="10.5" font-weight="600" fill="#1d4ed8" text-anchor="middle">GPIO4 → SIG2</text>
+<text x="835" y="260" font-size="10.5" font-weight="600" fill="#1d4ed8" text-anchor="middle">GPIO5 → SIG3</text>
+<text x="835" y="282" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">3V3 · GND</text>
+<rect x="980" y="175" width="190" height="240" rx="8" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="1075" y="204" font-size="13" font-weight="700" fill="#1f2937" text-anchor="middle">Mux #2 / #3</text>
+<text x="1075" y="222" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">CD74HC4067</text>
+<text x="1075" y="252" font-size="10" font-weight="600" fill="#14b8a6" text-anchor="middle">SIG ← GPIO4/5</text>
+<text x="1075" y="282" font-size="10" font-weight="400" fill="#6b7280" text-anchor="middle">S0–S3 chọn kênh</text>
+<text x="1075" y="316" font-size="11" font-weight="700" fill="#16a34a" text-anchor="middle">C0 … C8</text>
+<line x1="910" y1="240" x2="980" y2="240" stroke="#14b8a6" stroke-width="2.2" stroke-linecap="round"/>
+<text x="916" y="232" font-size="10" font-weight="600" fill="#14b8a6" text-anchor="start">SIG</text>
+<line x1="1170" y1="330" x2="1220" y2="330" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/>
+<text x="1180" y="320" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="start">C0</text>
+<polygon points="1220,318 1220,342 1244,330" fill="#16a34a" stroke="#16a34a" stroke-width="1.5"/>
+<line x1="1244" y1="317" x2="1244" y2="343" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+<line x1="1244" y1="330" x2="1280" y2="330" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+<text x="1220" y="298" font-size="10" font-weight="600" fill="#16a34a" text-anchor="start">Anode (chân dài)</text>
+<text x="1238" y="360" font-size="10" font-weight="600" fill="#6b7280" text-anchor="start">Cathode → GND</text>
+<line x1="1280" y1="330" x2="1330" y2="330" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="1330" y1="330" x2="1330" y2="342" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/>
+<line x1="1320" y1="342" x2="1340" y2="342" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="1324" y1="347" x2="1336" y2="347" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="1328" y1="352" x2="1332" y2="352" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round"/>
+<text x="740" y="450" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start" font-style="italic">Không dùng điện trở hạn dòng; dòng qua mux ước tính 8–12 mA.</text>
+<text x="740" y="470" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start" font-style="italic">Thử đúng 1 LED trước khi đấu đủ 14 LED; nếu mux/ESP32 nóng, ngắt điện.</text>
+<text x="740" y="500" font-size="10.5" font-weight="600" fill="#15803d" text-anchor="start">LED hướng X → Y đặt ở phía X của cửa nối X và Y.</text>
+<rect x="40" y="555" width="1320" height="420" rx="10" fill="#f8fafc" stroke="#334155" stroke-width="1.4"/>
+<text x="60" y="586" font-size="15" font-weight="700" fill="#1f2937" text-anchor="start">③ Bảng 14 LED theo cửa</text>
+<text x="60" y="608" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start" font-style="italic">Mỗi cửa trong có 2 LED (mỗi bên 1 chiếc); G1/G2 chỉ có 1 LED phía trong tòa nhà.</text>
+<rect x="60" y="635" width="410" height="36" rx="4" fill="#e2e8f0" stroke="#334155" stroke-width="1.2"/>
+<text x="95.0" y="658" font-size="10.5" font-weight="700" fill="#1f2937" text-anchor="middle">LED</text>
+<text x="190.0" y="658" font-size="10.5" font-weight="700" fill="#1f2937" text-anchor="middle">Hướng</text>
+<text x="305.0" y="658" font-size="10.5" font-weight="700" fill="#1f2937" text-anchor="middle">Đặt tại</text>
+<text x="415.0" y="658" font-size="10.5" font-weight="700" fill="#1f2937" text-anchor="middle">Mux, kênh</text>
+<rect x="60" y="671" width="410" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="95.0" y="694" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L1</text>
+<text x="190.0" y="694" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">A → C</text>
+<text x="305.0" y="694" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía A</text>
+<text x="415.0" y="694" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C0</text>
+<rect x="60" y="707" width="410" height="36" rx="0" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+<text x="95.0" y="730" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L2</text>
+<text x="190.0" y="730" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">C → A</text>
+<text x="305.0" y="730" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía C</text>
+<text x="415.0" y="730" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C1</text>
+<rect x="60" y="743" width="410" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="95.0" y="766" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L3</text>
+<text x="190.0" y="766" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">B → C</text>
+<text x="305.0" y="766" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía B</text>
+<text x="415.0" y="766" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C2</text>
+<rect x="60" y="779" width="410" height="36" rx="0" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+<text x="95.0" y="802" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L4</text>
+<text x="190.0" y="802" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">C → B</text>
+<text x="305.0" y="802" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía C</text>
+<text x="415.0" y="802" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C3</text>
+<rect x="60" y="815" width="410" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="95.0" y="838" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L5</text>
+<text x="190.0" y="838" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">B → D</text>
+<text x="305.0" y="838" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía B</text>
+<text x="415.0" y="838" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C4</text>
+<rect x="60" y="851" width="410" height="36" rx="0" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+<text x="95.0" y="874" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L6</text>
+<text x="190.0" y="874" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">D → B</text>
+<text x="305.0" y="874" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía D</text>
+<text x="415.0" y="874" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C5</text>
+<rect x="60" y="887" width="410" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="95.0" y="910" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L7</text>
+<text x="190.0" y="910" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">C → E</text>
+<text x="305.0" y="910" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía C</text>
+<text x="415.0" y="910" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C6</text>
+<line x1="60" y1="671" x2="470" y2="671" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="707" x2="470" y2="707" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="743" x2="470" y2="743" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="779" x2="470" y2="779" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="815" x2="470" y2="815" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="851" x2="470" y2="851" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="60" y1="887" x2="470" y2="887" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="130" y1="635" x2="130" y2="923" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="250" y1="635" x2="250" y2="923" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="360" y1="635" x2="360" y2="923" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<rect x="720" y="635" width="410" height="36" rx="4" fill="#e2e8f0" stroke="#334155" stroke-width="1.2"/>
+<text x="755.0" y="658" font-size="10.5" font-weight="700" fill="#1f2937" text-anchor="middle">LED</text>
+<text x="850.0" y="658" font-size="10.5" font-weight="700" fill="#1f2937" text-anchor="middle">Hướng</text>
+<text x="965.0" y="658" font-size="10.5" font-weight="700" fill="#1f2937" text-anchor="middle">Đặt tại</text>
+<text x="1075.0" y="658" font-size="10.5" font-weight="700" fill="#1f2937" text-anchor="middle">Mux, kênh</text>
+<rect x="720" y="671" width="410" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="755.0" y="694" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L8</text>
+<text x="850.0" y="694" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">E → C</text>
+<text x="965.0" y="694" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía E</text>
+<text x="1075.0" y="694" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C7</text>
+<rect x="720" y="707" width="410" height="36" rx="0" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+<text x="755.0" y="730" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L9</text>
+<text x="850.0" y="730" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">D → E</text>
+<text x="965.0" y="730" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía D</text>
+<text x="1075.0" y="730" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#2 C8</text>
+<rect x="720" y="743" width="410" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="755.0" y="766" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L10</text>
+<text x="850.0" y="766" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">E → D</text>
+<text x="965.0" y="766" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía E</text>
+<text x="1075.0" y="766" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#3 C0</text>
+<rect x="720" y="779" width="410" height="36" rx="0" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+<text x="755.0" y="802" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L11</text>
+<text x="850.0" y="802" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">D → F</text>
+<text x="965.0" y="802" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía D</text>
+<text x="1075.0" y="802" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#3 C1</text>
+<rect x="720" y="815" width="410" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="755.0" y="838" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L12</text>
+<text x="850.0" y="838" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">F → D</text>
+<text x="965.0" y="838" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía F</text>
+<text x="1075.0" y="838" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#3 C2</text>
+<rect x="720" y="851" width="410" height="36" rx="0" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+<text x="755.0" y="874" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L13</text>
+<text x="850.0" y="874" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">A → G1</text>
+<text x="965.0" y="874" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía A</text>
+<text x="1075.0" y="874" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#3 C3</text>
+<rect x="720" y="887" width="410" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+<text x="755.0" y="910" font-size="10.5" font-weight="700" fill="#16a34a" text-anchor="middle">L14</text>
+<text x="850.0" y="910" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">F → G2</text>
+<text x="965.0" y="910" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">Phía F</text>
+<text x="1075.0" y="910" font-size="10.5" font-weight="400" fill="#1f2937" text-anchor="middle">#3 C4</text>
+<line x1="720" y1="671" x2="1130" y2="671" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="720" y1="707" x2="1130" y2="707" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="720" y1="743" x2="1130" y2="743" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="720" y1="779" x2="1130" y2="779" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="720" y1="815" x2="1130" y2="815" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="720" y1="851" x2="1130" y2="851" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="720" y1="887" x2="1130" y2="887" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="790" y1="635" x2="790" y2="923" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="910" y1="635" x2="910" y2="923" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<line x1="1020" y1="635" x2="1020" y2="923" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+<text x="60" y="945" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start" font-style="italic">LED sáng = chiều đó là next-hop của ít nhất một tuyến an toàn; tắt = không được đi.</text>
+<text x="720" y="945" font-size="10.5" font-weight="400" fill="#6b7280" text-anchor="start" font-style="italic">Thứ tự LED khớp LED_DIRECTIONS trong app.js và updateLeds() trong src/main.cpp.</text>
 </svg>

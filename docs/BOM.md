@@ -6,7 +6,7 @@
 | MQ-2 module (4 chân) | 6 | Khói/gas, cấp 5 V, chỉ dùng chân AO |
 | DHT11 module | 6 | Nhiệt độ, cấp 3,3 V |
 | CD74HC4067 | 3 | #1 đọc MQ-2, #2 và #3 quét LED |
-| LED xanh lá 2 chân | 17 (có khoảng 40) | Chỉ hướng đi. Dư LED có thể làm đèn trạng thái |
+| LED xanh lá 2 chân | 14 (có khoảng 40) | Chỉ hướng đi: 2 LED mỗi cửa trong, 1 LED phía trong mỗi cửa thoát. Dư LED có thể làm đèn trạng thái |
 | Điện trở 10 kΩ | 12 | Sáu cầu chia áp MQ-2 (mỗi cầu 2 điện trở) |
 | Sạc dự phòng 5 V | 1 | Cấp 5 V cho 6 MQ-2, nối chung GND với ESP32 |
 | Breadboard, dây nối | 1 bộ | Cần nhiều dây: khoảng 60 sợi |

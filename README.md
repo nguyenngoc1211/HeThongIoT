@@ -16,26 +16,41 @@ FireRoute là prototype IoT một tầng gồm 6 khu vực cảm biến (`A–F`
 
 ## 2. Topology hiện tại
 
+Mô hình một tầng theo `docs/so_do_demo.jpg`:
+
+```text
+              G1
+        ┌───────────┐
+        │     A     │
+        ├──────┬────┤
+        │  B   │ C  │
+        ├──────┼────┤
+        │  D   │ E  │
+        ├──────┴────┤
+        │     F     │
+        └───────────┘
+              G2
+```
+
 ```mermaid
-graph LR
+graph TD
+  G1 --- A
   A --- C
-  A --- E
   B --- C
-  B --- F
-  C --- D
+  B --- D
+  C --- E
   D --- E
   D --- F
-  C --- G1
-  E --- G1
   F --- G2
 ```
 
-Các cạnh `A-E`, `B-F` và `E-G1` tạo đường dự phòng. Ví dụ khi C cháy, A chuyển sang `A → E → G1` và B chuyển sang `B → F → G2`.
+Sáu cửa vàng nối `A-C`, `B-C`, `B-D`, `C-E`, `D-E`, `D-F`. `G1` chỉ nối với `A`, `G2` chỉ nối với `F`, nên không còn cạnh vòng dự phòng. Khi `A` cháy, các zone còn lại phải đi qua `F` để ra `G2`; nếu cả `A` và `F` cùng cháy thì các zone giữa không còn tuyến.
 
-Nếu thay đổi mô hình vật lý, phải sửa topology tại cả hai nơi:
+Nếu thay đổi mô hình vật lý, phải sửa topology tại các nơi:
 
-- `EDGES` trong `src/main.cpp`.
-- `EDGES`, `POS` và `ROOMS` trong `app.js`.
+- `EDGES`, `LED_COUNT` trong `src/main.cpp`.
+- `EDGES`, `POS`, `ROOMS`, `DOORS` và `LED_DIRECTIONS` trong `app.js`.
+- Bảng LED, số LED trong `docs/WIRING.md`, `docs/BOM.md` và hai file SVG đấu dây.
 
 ## 3. Cấu trúc dự án
 
@@ -204,8 +219,8 @@ Với rules demo công khai, để `FIREBASE_AUTH` rỗng. Sau đó build và up
       "A": {
         "status": "AVAILABLE",
         "exit": "G1",
-        "cost": 3,
-        "nodes": ["A", "C", "G1"]
+        "cost": 1,
+        "nodes": ["A", "G1"]
       }
     }
   },
@@ -236,14 +251,14 @@ Sơ đồ hình và bảng chân đầy đủ nằm ở `docs/WIRING.md` (`docs/
 | Mux #1 SIG | GPIO34 |
 | Mux #2 và #3 (LED) S0–S3, nối chung | GPIO21, 22, 23, 33 |
 | Mux #2 SIG (LED 1–9) | GPIO4 |
-| Mux #3 SIG (LED 10–17) | GPIO5 |
+| Mux #3 SIG (LED 10–14) | GPIO5 |
 
 Các lưu ý bắt buộc:
 
 - Nối chung GND của ESP32, sạc dự phòng, MQ-2, 3 mux và cathode của LED.
 - Không đưa trực tiếp analog 5 V từ MQ-2 vào mux/ESP32. Mỗi AO cần cầu chia áp 10 kΩ + 10 kΩ.
 - 5 V từ sạc dự phòng chỉ cấp cho MQ-2. Không nối 5 V vào VIN của ESP32 khi đang cắm USB.
-- LED chỉ hướng là 17 LED xanh lá thường, quét bằng Mux #2 và #3. Thử 1 LED trước khi đấu hết.
+- LED chỉ hướng là 14 LED xanh lá thường (2 LED mỗi cửa, riêng cửa thoát chỉ 1 LED phía trong), quét bằng Mux #2 và #3. Thử 1 LED trước khi đấu hết.
 - Firmware `src/main.cpp` đã viết cho cách đấu này (quét LED bằng mux, build thành công); chưa nạp thử trên mạch thật.
 
 ## 10. Ngưỡng phát hiện mặc định
@@ -297,8 +312,8 @@ Các ngưỡng MQ-2 chỉ là giá trị khởi đầu. Cần làm nóng cảm b
 - [ ] Firmware build báo `[SUCCESS]`.
 - [ ] Sáu DHT11 đều trả nhiệt độ hợp lệ.
 - [ ] Sáu kênh MQ-2 có ADC khác 0 và không vượt 4095.
-- [ ] Lệnh `FIRE C` làm A đổi hướng sang E và B đổi hướng sang F.
-- [ ] 17 LED sáng đúng chiều theo bảng LED trong `docs/WIRING.md`.
+- [ ] Lệnh `FIRE C` làm B, D, E đổi hướng về G2; A vẫn đi G1.
+- [ ] 14 LED sáng đúng chiều theo bảng LED trong `docs/WIRING.md`.
 - [ ] ESP32 vẫn đổi LED khi tắt Wi-Fi.
 - [ ] Firebase nhận `/current` và `/fireHistory`.
 - [ ] Dashboard không báo dữ liệu cũ khi ESP32 đang hoạt động.

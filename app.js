@@ -27,27 +27,50 @@ const ZONES = ["A", "B", "C", "D", "E", "F"];
 const EXITS = ["G1", "G2"];
 const ALL_NODES = [...ZONES, ...EXITS];
 
+// Mô hình tòa nhà theo docs/so_do_demo.jpg:
+// A là sảnh trên, B/C là hai phòng giữa-trên, D/E là hai phòng giữa-dưới, F là sảnh dưới.
+// G1 thoát qua A, G2 thoát qua F. Không còn các cạnh vòng A-E, B-F, E-G1.
 const EDGES = [
-  ["A", "C", 2], ["B", "C", 2], ["C", "D", 2],
-  ["D", "E", 2], ["D", "F", 2], ["C", "G1", 1], ["F", "G2", 1],
-  ["A", "E", 3], ["B", "F", 3], ["E", "G1", 1],
+  ["A", "C", 2], ["B", "C", 2], ["B", "D", 2],
+  ["C", "E", 2], ["D", "E", 2], ["D", "F", 2],
+  ["A", "G1", 1], ["F", "G2", 1],
 ];
 
 // SVG positions (viewBox 0 0 800 520)
 const POS = {
-  A:  [175, 105], B:  [540, 105], C:  [360, 200],
-  D:  [360, 355], E:  [175, 440], F:  [540, 440],
-  G1: [95, 200],  G2: [700, 440],
+  A:  [400, 100], B:  [255, 220], C:  [545, 220],
+  D:  [255, 340], E:  [545, 340], F:  [400, 435],
+  G1: [400, 26],  G2: [400, 494],
 };
 
 // Room areas for floor-plan feel
 const ROOMS = [
-  { id:"A", x:115, y:55,  w:120, h:100, label:"PHÒNG A" },
-  { id:"B", x:480, y:55,  w:120, h:100, label:"PHÒNG B" },
-  { id:"C", x:295, y:160, w:130, h:80,  label:"HÀNH LANG" },
-  { id:"D", x:295, y:315, w:130, h:80,  label:"NÚT GIAO" },
-  { id:"E", x:115, y:390, w:120, h:100, label:"PHÒNG E" },
-  { id:"F", x:480, y:390, w:120, h:100, label:"PHÒNG F" },
+  { id:"A", x:120, y:45,  w:560, h:105, label:"SẢNH A" },
+  { id:"B", x:120, y:150, w:280, h:140, label:"PHÒNG B" },
+  { id:"C", x:400, y:150, w:280, h:140, label:"PHÒNG C" },
+  { id:"D", x:120, y:290, w:280, h:100, label:"PHÒNG D" },
+  { id:"E", x:400, y:290, w:280, h:100, label:"PHÒNG E" },
+  { id:"F", x:120, y:390, w:560, h:90,  label:"SẢNH F" },
+];
+
+// Cửa nối các phòng — toạ độ giao điểm với tường, dùng để vẽ cửa và LED.
+const DOORS = [
+  { pair:["A","C"], x:460, y:150, orient:"h" },
+  { pair:["B","C"], x:400, y:220, orient:"v" },
+  { pair:["B","D"], x:255, y:290, orient:"h" },
+  { pair:["C","E"], x:545, y:290, orient:"h" },
+  { pair:["D","E"], x:400, y:340, orient:"v" },
+  { pair:["D","F"], x:329, y:390, orient:"h" },
+  { pair:["A","G1"], x:400, y:45,  orient:"exit" },
+  { pair:["F","G2"], x:400, y:480, orient:"exit" },
+];
+const DOOR_BY_PAIR = new Map(DOORS.map(d => [d.pair.slice().sort().join("-"), d]));
+
+// Thứ tự 14 LED khớp src/main.cpp và docs/WIRING.md.
+const LED_DIRECTIONS = [
+  ["A","C"], ["C","A"], ["B","C"], ["C","B"], ["B","D"], ["D","B"],
+  ["C","E"], ["E","C"], ["D","E"], ["E","D"], ["D","F"], ["F","D"],
+  ["A","G1"], ["F","G2"],
 ];
 
 const TEMP_WARN = 48, TEMP_FIRE = 55;
@@ -189,21 +212,16 @@ function renderMap() {
     <filter id="glow-g" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4"/></filter>
     <filter id="glow-r" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5"/></filter>
     <filter id="glow-o" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3"/></filter>
-    <marker id="guide-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#00e676"/></marker>
-    <marker id="urgent-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#ff9100"/></marker>
+    <marker id="guide-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#00e676"/></marker>
+    <marker id="urgent-arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L6,3 L0,6 Z" fill="#ff9100"/></marker>
   </defs>`;
 
-  // Room areas
+  // Tường ngoài và các phòng
+  svg += `<rect class="building-outline" x="120" y="45" width="560" height="435" rx="4"/>`;
   for (const room of ROOMS) {
     const isFire = blocked.has(room.id);
     svg += `<rect class="room-area${isFire ? " room-fire" : ""}" x="${room.x}" y="${room.y}" width="${room.w}" height="${room.h}"/>`;
-    svg += `<text class="room-label" x="${room.x + room.w / 2}" y="${room.y + room.h - 8}">${room.label}</text>`;
-  }
-
-  // Exit markers (door shapes)
-  for (const eid of EXITS) {
-    const [x, y] = POS[eid];
-    svg += `<rect x="${x - 20}" y="${y - 14}" width="40" height="28" rx="4" fill="none" stroke="rgba(0,191,165,0.2)" stroke-width="1" stroke-dasharray="3 3"/>`;
+    svg += `<text class="room-label" x="${room.x + 12}" y="${room.y + 18}">${room.label}</text>`;
   }
 
   for (const [a, b] of EDGES) {
@@ -226,6 +244,34 @@ function renderMap() {
     svg += `<line class="inspect-route" x1="${fx}" y1="${fy}" x2="${tx}" y2="${ty}"/>`;
   }
 
+  // Cửa ra vào (vàng) và cửa thoát hiểm (xanh)
+  for (const door of DOORS) {
+    if (door.orient === "exit") {
+      const dir = door.y < 260 ? -1 : 1;
+      svg += `<path class="exit-door" d="M ${door.x - 18} ${door.y} Q ${door.x} ${door.y + dir * 16} ${door.x + 18} ${door.y}"/>`;
+    } else if (door.orient === "h") {
+      svg += `<rect class="door" x="${door.x - 17}" y="${door.y - 4}" width="34" height="8" rx="3"/>`;
+    } else {
+      svg += `<rect class="door" x="${door.x - 4}" y="${door.y - 17}" width="8" height="34" rx="3"/>`;
+    }
+  }
+
+  // 14 LED chỉ hướng: mỗi bên cửa một chiếc, sáng theo next-hop của các tuyến.
+  const activeDirections = new Set();
+  for (const route of Object.values(state.current.routes)) {
+    if (!route?.nodes) continue;
+    for (let i = 1; i < route.nodes.length; i++) activeDirections.add(`${route.nodes[i - 1]}→${route.nodes[i]}`);
+  }
+  LED_DIRECTIONS.forEach(([from, to], i) => {
+    const door = DOOR_BY_PAIR.get([from, to].sort().join("-"));
+    if (!door) return;
+    const [fx, fy] = POS[from];
+    const dx = fx - door.x, dy = fy - door.y, len = Math.hypot(dx, dy) || 1;
+    const x = door.x + dx / len * 13, y = door.y + dy / len * 13;
+    const on = activeDirections.has(`${from}→${to}`);
+    svg += `<circle class="led-dot ${on ? "on" : "off"}" cx="${x}" cy="${y}" r="3.4"><title>L${i + 1} · ${from} → ${to} · ${on ? "sáng" : "tắt"}</title></circle>`;
+  });
+
   // Một mũi tên next-hop cho từng zone: đây là chỉ dẫn mà LED tại zone đó thể hiện.
   for (const zone of ZONES) {
     const route = state.current.routes[zone];
@@ -234,13 +280,19 @@ function renderMap() {
     const [sx, sy] = POS[zone], [tx, ty] = POS[next];
     const dx = tx - sx, dy = ty - sy, len = Math.hypot(dx, dy) || 1;
     const ux = dx / len, uy = dy / len;
-    const x1 = sx + ux * 31, y1 = sy + uy * 31;
-    const x2 = tx - ux * (next.startsWith("G") ? 30 : 34), y2 = ty - uy * (next.startsWith("G") ? 30 : 34);
+    // Co theo độ dài thật để mũi tên không bị đảo khi cửa thoát nằm sát zone.
+    const padS = Math.min(31, len * 0.28);
+    const padT = Math.min(next.startsWith("G") ? 30 : 34, len * 0.32);
+    const x1 = sx + ux * padS, y1 = sy + uy * padS;
+    const x2 = tx - ux * padT, y2 = ty - uy * padT;
     const urgent = !!state.current.zones[zone]?.fire;
     svg += `<g class="zone-guidance${urgent ? " urgent" : ""}" data-guide-zone="${zone}">`;
     svg += `<line class="guidance-halo" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
     svg += `<line class="guidance-arrow" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" marker-end="url(#${urgent ? "urgent-arrow" : "guide-arrow"})"/>`;
-    svg += `<text class="next-hop-label" x="${sx}" y="${sy + 45}">ĐI ${next} · ${route.exit}</text>`;
+    const guideLabel = next === route.exit ? `THOÁT ${route.exit}` : `ĐI ${next} · ${route.exit}`;
+    // Cửa thoát nằm dưới (G2) thì đặt nhãn phía trên để không đè mũi tên.
+    const labelY = next.startsWith("G") && POS[next][1] > sy ? sy - 38 : sy + 38;
+    svg += `<text class="next-hop-label" x="${sx}" y="${labelY}">${guideLabel}</text>`;
     svg += `</g>`;
   }
 

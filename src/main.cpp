@@ -11,18 +11,18 @@ namespace Config {
 constexpr uint8_t ZONE_COUNT = 6;
 constexpr uint8_t NODE_COUNT = 8;
 constexpr uint8_t EXIT_COUNT = 2;
-constexpr uint8_t EDGE_COUNT = 10;
+constexpr uint8_t EDGE_COUNT = 8;
 
 constexpr uint8_t DHT_PINS[ZONE_COUNT] = {13, 14, 25, 26, 27, 32};
 constexpr uint8_t MUX_SELECT_PINS[4] = {16, 17, 18, 19};
 constexpr uint8_t MUX_SIGNAL_PIN = 34;  // ADC1: hoạt động cả khi Wi-Fi bật.
-// Hai CD74HC4067 quét 17 LED: mux #2 giữ LED 1-9, mux #3 giữ LED 10-17.
+// Hai CD74HC4067 quét 14 LED: mux #2 giữ LED 1-9, mux #3 giữ LED 10-14.
 // Hai mux dùng chung 4 chân chọn kênh, mỗi mux có một chân SIG riêng.
 constexpr uint8_t LED_SELECT_PINS[4] = {21, 22, 23, 33};
 constexpr uint8_t LED_SIG_PINS[2] = {4, 5};
 constexpr uint8_t LED_MUX_COUNT = 2;
 constexpr uint8_t LED_PER_MUX = 9;
-constexpr uint8_t LED_COUNT = 17;  // Mỗi chiều đi vào tòa nhà một LED; bỏ chiều từ cửa thoát vào trong.
+constexpr uint8_t LED_COUNT = 14;  // Mỗi chiều đi vào tòa nhà một LED; bỏ chiều từ cửa thoát vào trong.
 
 constexpr float FIRE_TEMP_C = 55.0F;
 constexpr float SAFE_TEMP_C = 48.0F;
@@ -45,12 +45,14 @@ struct Edge {
   uint8_t cost;
 };
 
-// Topology dùng chung với dashboard. Chi phí gần đúng theo độ dài hành lang.
+// Topology dùng chung với dashboard, theo docs/so_do_demo.jpg.
+// Thứ tự cạnh cũng quyết định thứ tự 14 LED trong updateLeds()/docs/WIRING.md.
 constexpr Edge EDGES[Config::EDGE_COUNT] = {
-    {A, C, 2}, {B, C, 2}, {C, D, 2}, {D, E, 2},
-    {D, F, 2}, {C, G1, 1}, {F, G2, 1}, {A, E, 3},
-    {B, F, 3}, {E, G1, 1},
+    {A, C, 2}, {B, C, 2}, {B, D, 2}, {C, E, 2},
+    {D, E, 2}, {D, F, 2}, {A, G1, 1}, {F, G2, 1},
 };
+static_assert(Config::LED_COUNT == 2 * Config::EDGE_COUNT - Config::EXIT_COUNT,
+              "So LED phai bang 2 * so canh - so canh cua thoat");
 
 struct ZoneData {
   float temperature = 25.0F;
