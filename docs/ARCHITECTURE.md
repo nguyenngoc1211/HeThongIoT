@@ -18,7 +18,7 @@ Các cạnh có trọng số: `A-C=2`, `B-C=2`, `B-D=2`, `C-E=2`, `D-E=2`, `D-F=
 
 ## Luồng xử lý
 
-1. ESP32 đọc sáu DHT11 và lần lượt chọn sáu MQ-2 qua CD74HC4067 mỗi 2 giây.
+1. ESP32 đọc sáu MQ-2 qua CD74HC4067 mỗi 1 giây và sáu DHT11 mỗi 2 giây.
 2. Một zone chuyển sang cháy sau ba mẫu nguy hiểm liên tiếp. Nó chỉ trở lại an toàn sau năm mẫu dưới ngưỡng an toàn liên tiếp.
 3. ESP32 chạy Dijkstra riêng cho cả sáu điểm A–F. Zone cháy bị cấm làm điểm trung gian, nhưng khi chính nó là điểm bắt đầu, hệ thống vẫn tính hướng đi ra cho người đang ở trong đó.
 4. Mỗi LED xanh biểu diễn một chiều qua cửa: sáng nếu chiều đó là next-hop của ít nhất một tuyến an toàn, tắt nếu không được đi. 14 LED (2 LED mỗi cửa trong, 1 LED phía trong mỗi cửa thoát) được quét bằng hai CD74HC4067 trên một task riêng ở core 0.

@@ -6,7 +6,7 @@ FireRoute là prototype IoT một tầng gồm 6 khu vực cảm biến (`A–F`
 
 ## 1. Nguyên lý hoạt động
 
-1. ESP32 đọc 6 DHT11 và 6 MQ-2 mỗi 2 giây.
+1. ESP32 đọc 6 MQ-2 mỗi 1 giây và 6 DHT11 mỗi 2 giây.
 2. Khi nhiệt độ hoặc khói vượt ngưỡng đủ số mẫu liên tiếp, zone được đánh dấu cháy.
 3. ESP32 tính route riêng cho **tất cả A–F**, không có một điểm xuất phát chung.
 4. Zone cháy không được dùng làm đường trung gian. Người trong chính zone cháy vẫn được chỉ dẫn đi ra.

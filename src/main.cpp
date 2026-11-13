@@ -30,7 +30,8 @@ constexpr uint16_t FIRE_SMOKE_ADC = 2500;
 constexpr uint16_t SAFE_SMOKE_ADC = 2200;
 constexpr uint8_t FIRE_CONFIRM_SAMPLES = 3;
 constexpr uint8_t SAFE_CONFIRM_SAMPLES = 5;
-constexpr uint32_t SENSOR_INTERVAL_MS = 2000;
+constexpr uint32_t SENSOR_INTERVAL_MS = 1000;
+constexpr uint32_t DHT_INTERVAL_MS = 2000;
 constexpr uint32_t CLOUD_INTERVAL_MS = 15000;
 constexpr uint32_t MQ2_WARMUP_MS = 20000;
 constexpr uint16_t INF = 30000;
@@ -81,6 +82,7 @@ bool manualFire[Config::ZONE_COUNT]{};
 bool manualMode = false;
 bool routesDirty = true;
 uint32_t lastSensorRead = 0;
+uint32_t lastDhtRead = 0;
 uint32_t lastCloudWrite = 0;
 
 bool isExit(Node node) { return node == G1 || node == G2; }
@@ -279,16 +281,22 @@ void evaluateZone(uint8_t zone, bool smokeReady) {
 }
 
 void readSensors() {
-  const bool smokeReady = millis() >= Config::MQ2_WARMUP_MS;
+  const uint32_t now = millis();
+  const bool smokeReady = now >= Config::MQ2_WARMUP_MS;
+  // DHT11 cần tối thiểu 1 giây; một số module trong bộ chỉ ổn định ở 2 giây.
+  const bool readDht = now - lastDhtRead >= Config::DHT_INTERVAL_MS;
+  if (readDht) lastDhtRead = now;
   for (uint8_t zone = 0; zone < Config::ZONE_COUNT; ++zone) {
-    const TempAndHumidity reading = dht[zone].getTempAndHumidity();
-    const bool dhtOk = dht[zone].getStatus() == 0 && !isnan(reading.temperature) &&
-                       !isnan(reading.humidity);
-    if (dhtOk) {
-      zones[zone].temperature = reading.temperature;
-      zones[zone].humidity = reading.humidity;
+    if (readDht) {
+      const TempAndHumidity reading = dht[zone].getTempAndHumidity();
+      const bool dhtOk = dht[zone].getStatus() == 0 && !isnan(reading.temperature) &&
+                         !isnan(reading.humidity);
+      if (dhtOk) {
+        zones[zone].temperature = reading.temperature;
+        zones[zone].humidity = reading.humidity;
+      }
+      zones[zone].dhtOk = dhtOk;
     }
-    zones[zone].dhtOk = dhtOk;
     zones[zone].smoke = readMux(zone);
     evaluateZone(zone, smokeReady);
     Serial.printf("%s: %.1f C, %.1f %%, smoke=%u, fire=%d, dht=%d\n", NODE_NAMES[zone],
