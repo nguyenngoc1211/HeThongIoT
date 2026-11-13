@@ -267,12 +267,21 @@ Các lưu ý bắt buộc:
 |---|---:|
 | Báo cháy theo nhiệt độ | ≥ 55 °C |
 | Trở lại an toàn theo nhiệt độ | < 48 °C |
-| Báo cháy theo MQ-2 | ADC ≥ 2300 |
-| Trở lại an toàn theo MQ-2 | ADC < 2200 |
 | Xác nhận báo cháy | 3 mẫu liên tiếp |
 | Xác nhận hết cháy | 5 mẫu liên tiếp |
 
-Các ngưỡng MQ-2 chỉ là giá trị khởi đầu. Cần làm nóng cảm biến, đo ADC nền của từng module rồi hiệu chuẩn trước khi trình diễn.
+Ngưỡng MQ-2 riêng từng zone:
+
+| Zone | Cảnh báo / hồi phục | Báo cháy |
+|---|---:|---:|
+| A | 550 | 700 |
+| B | 1550 | 1750 |
+| C | 1550 | 1750 |
+| D | 2200 | 2450 |
+| E | 1550 | 1750 |
+| F | 2250 | 2500 |
+
+Các ngưỡng MQ-2 được hiệu chuẩn từ nền ADC thực tế của từng module. Nếu thay cảm biến hoặc thay đổi cầu chia áp, phải đo lại nền và cập nhật cả firmware lẫn dashboard.
 
 ## 11. Xử lý lỗi thường gặp
 

@@ -26,8 +26,9 @@ constexpr uint8_t LED_COUNT = 14;  // Mỗi chiều đi vào tòa nhà một LED
 
 constexpr float FIRE_TEMP_C = 55.0F;
 constexpr float SAFE_TEMP_C = 48.0F;
-constexpr uint16_t FIRE_SMOKE_ADC = 2300;
-constexpr uint16_t SAFE_SMOKE_ADC = 2200;
+// Ngưỡng riêng từng zone, hiệu chuẩn từ nền ADC thực tế.
+constexpr uint16_t FIRE_SMOKE_ADC[ZONE_COUNT] = {700, 1750, 1750, 2450, 1750, 2500};
+constexpr uint16_t SAFE_SMOKE_ADC[ZONE_COUNT] = {550, 1550, 1550, 2200, 1550, 2250};
 constexpr uint8_t FIRE_CONFIRM_SAMPLES = 3;
 constexpr uint8_t SAFE_CONFIRM_SAMPLES = 5;
 constexpr uint32_t SENSOR_INTERVAL_MS = 1000;
@@ -270,9 +271,9 @@ void evaluateZone(uint8_t zone, bool smokeReady) {
     return;
   }
   const bool danger = zones[zone].temperature >= Config::FIRE_TEMP_C ||
-                      (smokeReady && zones[zone].smoke >= Config::FIRE_SMOKE_ADC);
+                      (smokeReady && zones[zone].smoke >= Config::FIRE_SMOKE_ADC[zone]);
   const bool safe = zones[zone].temperature < Config::SAFE_TEMP_C &&
-                    (!smokeReady || zones[zone].smoke < Config::SAFE_SMOKE_ADC);
+                    (!smokeReady || zones[zone].smoke < Config::SAFE_SMOKE_ADC[zone]);
 
   zones[zone].dangerSamples = danger ? (zones[zone].dangerSamples < 20 ? zones[zone].dangerSamples + 1 : 20) : 0;
   zones[zone].safeSamples = safe ? (zones[zone].safeSamples < 20 ? zones[zone].safeSamples + 1 : 20) : 0;

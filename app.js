@@ -74,7 +74,17 @@ const LED_DIRECTIONS = [
 ];
 
 const TEMP_WARN = 48, TEMP_FIRE = 55;
-const SMOKE_WARN = 2200, SMOKE_FIRE = 2300;
+// Ngưỡng riêng từng zone, hiệu chuẩn từ nền ADC thực tế.
+const SMOKE_THRESHOLDS = {
+  A: { warn: 550, fire: 700 },
+  B: { warn: 1550, fire: 1750 },
+  C: { warn: 1550, fire: 1750 },
+  D: { warn: 2200, fire: 2450 },
+  E: { warn: 1550, fire: 1750 },
+  F: { warn: 2250, fire: 2500 },
+};
+function smokeWarn(zone) { return SMOKE_THRESHOLDS[zone]?.warn ?? 2200; }
+function smokeFire(zone) { return SMOKE_THRESHOLDS[zone]?.fire ?? 2300; }
 const STALE_MS = 30000;
 const SENSOR_STALE_MS = 7000;
 
@@ -496,12 +506,12 @@ function renderZoneDetail() {
   const humidityAvailable = hasNumber(d.humidity);
   const humidity = humidityAvailable ? Number(d.humidity) : 0;
   const fire = !!d.fire;
-  const hiT = temp >= TEMP_WARN, hiS = smoke >= SMOKE_WARN;
+  const hiT = temp >= TEMP_WARN, hiS = smoke >= smokeWarn(selectedZone);
 
   const tPct = clamp(temp / 100 * 100, 0, 100);
   const sPct = clamp(smoke / 3000 * 100, 0, 100);
   const tCls = fire || temp >= TEMP_FIRE ? "danger" : hiT ? "warn" : "safe";
-  const sCls = fire || smoke >= SMOKE_FIRE ? "danger" : hiS ? "warn" : "safe";
+  const sCls = fire || smoke >= smokeFire(selectedZone) ? "danger" : hiS ? "warn" : "safe";
 
   let statusCls, statusText;
   if (!d.online) { statusCls = "warn"; statusText = d.lastReading ? "MẤT KẾT NỐI" : "CHỜ DỮ LIỆU"; }
@@ -531,8 +541,8 @@ function renderSensors() {
 
   let ids = [...ZONES];
   if (sortDanger) ids.sort((a, b) => {
-    const fa = zones[a]?.fire ? 2 : (zones[a]?.temperature >= TEMP_WARN || zones[a]?.smoke >= SMOKE_WARN) ? 1 : 0;
-    const fb = zones[b]?.fire ? 2 : (zones[b]?.temperature >= TEMP_WARN || zones[b]?.smoke >= SMOKE_WARN) ? 1 : 0;
+    const fa = zones[a]?.fire ? 2 : (zones[a]?.temperature >= TEMP_WARN || zones[a]?.smoke >= smokeWarn(a)) ? 1 : 0;
+    const fb = zones[b]?.fire ? 2 : (zones[b]?.temperature >= TEMP_WARN || zones[b]?.smoke >= smokeWarn(b)) ? 1 : 0;
     return fb - fa;
   });
 
@@ -541,7 +551,7 @@ function renderSensors() {
     const d = zones[id] || { temperature: 0, smoke: 0, fire: false };
     const tempAvailable = hasNumber(d.temperature), smokeAvailable = hasNumber(d.smoke), humidityAvailable = hasNumber(d.humidity);
     const temp = tempAvailable ? Number(d.temperature) : 0, smoke = smokeAvailable ? Number(d.smoke) : 0, humidity = humidityAvailable ? Number(d.humidity) : 0, fire = !!d.fire;
-    const hiT = temp >= TEMP_WARN, hiS = smoke >= SMOKE_WARN, isWarn = (hiT || hiS) && !fire;
+    const hiT = temp >= TEMP_WARN, hiS = smoke >= smokeWarn(id), isWarn = (hiT || hiS) && !fire;
     const offline = !d.online;
 
     let cardCls = "sensor-card", badgeCls = "sb-safe", badgeText = "AN TOÀN";
@@ -632,8 +642,8 @@ function showTooltip(zoneId, event) {
   const d = state.current.zones[zoneId] || {};
   const tempAvailable = hasNumber(d.temperature), humidityAvailable = hasNumber(d.humidity);
   const temp = tempAvailable ? Number(d.temperature) : 0, smoke = hasNumber(d.smoke) ? Number(d.smoke) : 0, fire = !!d.fire;
-  const status = fire ? "CHÁY" : (temp >= TEMP_WARN || smoke >= SMOKE_WARN) ? "CẢNH BÁO" : "AN TOÀN";
-  const statusCls = fire ? "tt-fire" : (temp >= TEMP_WARN || smoke >= SMOKE_WARN) ? "tt-fire" : "tt-safe";
+  const status = fire ? "CHÁY" : (temp >= TEMP_WARN || smoke >= smokeWarn(zoneId)) ? "CẢNH BÁO" : "AN TOÀN";
+  const statusCls = fire ? "tt-fire" : (temp >= TEMP_WARN || smoke >= smokeWarn(zoneId)) ? "tt-fire" : "tt-safe";
 
   tip.innerHTML = `<div class="tt-zone">Zone ${escapeHtml(zoneId)}</div>
     <div class="tt-row"><span>Nhiệt độ</span><strong>${tempAvailable ? `${temp.toFixed(1)}°C` : "--"}</strong></div>
@@ -708,7 +718,7 @@ function applyRealtimeReading(payload) {
   const wasFire = !!zone.fire;
   const isFire = explicitFire !== null
     ? explicitFire
-    : (temperature !== null && temperature >= TEMP_FIRE) || (smoke !== null && smoke >= SMOKE_FIRE);
+    : (temperature !== null && temperature >= TEMP_FIRE) || (smoke !== null && smoke >= smokeFire(payload.zone));
   lastSerialReading = Date.now();
   setText("#liveSourceText", "ESP32 qua USB");
   Object.assign(zone, { temperature, humidity, smoke, fire: isFire, online: true, source: "serial", lastReading: timestamp, gpio: payload.gpio ?? zone.gpio });

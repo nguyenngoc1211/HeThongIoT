@@ -75,7 +75,7 @@ MQ-2 AO ──[ 10 kΩ ]──┬──→ chân Cn của mux
 - Điện áp 0–5 V ở AO còn 0–2,5 V, an toàn cho mux (cấp 3,3 V) và ESP32.
 - Cần 12 điện trở 10 kΩ cho phần này.
 - Chân DO của MQ-2 không dùng, để trống.
-- Điện áp chia đôi nên ADC đọc được chỉ bằng khoảng một nửa so với thiết kế cũ. Ngưỡng tạm thời trong firmware là `FIRE_SMOKE_ADC = 2300` và `SAFE_SMOKE_ADC = 2200`; phải hiệu chuẩn lại bằng khói thật.
+- Điện áp chia đôi nên ADC đọc được chỉ bằng khoảng một nửa so với thiết kế cũ. Firmware dùng ngưỡng riêng từng zone: A 700/550, B 1750/1550, C 1750/1550, D 2450/2200, E 1750/1550, F 2500/2250 (báo cháy/hồi phục). Phải hiệu chuẩn lại bằng khói thật.
 
 ## 5. LED chỉ hướng (14 LED xanh, quét bằng Mux #2 và #3)
 
