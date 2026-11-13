@@ -90,6 +90,7 @@ let previousValues = {};
 let realtimeSource = null;
 let realtimeRenderTimer = null;
 let lastSerialReading = 0;
+let firebaseHistoryLoaded = false;
 
 let state = {
   current: {
@@ -115,6 +116,15 @@ function formatTime(ts) { if (!ts) return "--:--"; const d = new Date(ts); retur
 function formatTimeSec(ts) { if (!ts) return "--:--:--"; const d = new Date(ts); return isNaN(d) ? "--:--:--" : d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }); }
 function formatDate(ts) { if (!ts) return "--"; const d = new Date(ts); return isNaN(d) ? "--" : d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }); }
 function formatDT(ts) { return ts ? `${formatDate(ts)} ${formatTime(ts)}` : "--"; }
+function formatDuration(ms) {
+  if (!Number.isFinite(ms) || ms < 0) return "--";
+  const sec = Math.floor(ms / 1000);
+  const min = Math.floor(sec / 60);
+  const hour = Math.floor(min / 60);
+  if (hour > 0) return `${hour} giờ ${min % 60} phút`;
+  if (min > 0) return `${min} phút ${sec % 60} giây`;
+  return `${sec} giây`;
+}
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 function hasNumber(value) { return value !== null && value !== "" && Number.isFinite(Number(value)); }
 
@@ -570,14 +580,23 @@ function renderHistory() {
     return;
   }
 
-  let h = "";
+  const activeCount = entries.filter(([, item]) => !item.time_end).length;
+  let h = `<div class="history-summary">
+    <span>Tổng <strong>${entries.length}</strong> vụ</span>
+    <span><strong>${activeCount}</strong> đang diễn ra</span>
+    ${firebaseHistoryLoaded ? '<span class="h-source">Firebase</span>' : ""}
+  </div>`;
   for (const [, item] of entries) {
     const active = !item.time_end;
+    const start = Number(item.time_start) || 0;
+    const end = item.time_end ? Number(item.time_end) : null;
+    const duration = start ? (end ? end - start : Date.now() - start) : 0;
     h += `<article class="history-row">
       <span class="h-icon ${active ? "h-active" : "h-done"}">${active ? "!" : "✓"}</span>
       <div class="h-content">
         <strong>Cảnh báo tại Zone ${escapeHtml(item.zone || "?")}</strong>
-        <small>${formatDT(item.time_start)} ${active ? `<span class="h-badge h-live">Đang diễn ra</span>` : `<span class="h-badge h-resolved">Kết thúc</span> ${formatDT(item.time_end)}`}</small>
+        <small>Bắt đầu: ${formatDT(start)}</small>
+        <small>${active ? `<span class="h-badge h-live">Đang diễn ra</span> ${formatDuration(duration)}` : `<span class="h-badge h-resolved">Kết thúc</span> ${formatDT(end)} · ${formatDuration(duration)}`}</small>
       </div>
     </article>`;
   }
@@ -743,6 +762,7 @@ async function initFirebaseFallback() {
     onValue(ref(db, "current"), snapshot => applyFirebaseState(snapshot.val()));
     onValue(ref(db, "fireHistory"), snapshot => {
       state.fireHistory = snapshot.val() || {};
+      firebaseHistoryLoaded = true;
       renderHistory();
     });
   } catch (error) {
