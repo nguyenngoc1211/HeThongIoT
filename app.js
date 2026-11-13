@@ -111,6 +111,7 @@ const $$ = s => document.querySelectorAll(s);
 function setText(s, t) { const el = $(s); if (el) el.textContent = t; }
 function escapeHtml(v) { const d = document.createElement("div"); d.appendChild(document.createTextNode(String(v))); return d.innerHTML; }
 function formatTime(ts) { if (!ts) return "--:--"; const d = new Date(ts); return isNaN(d) ? "--:--" : d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }); }
+function formatTimeSec(ts) { if (!ts) return "--:--:--"; const d = new Date(ts); return isNaN(d) ? "--:--:--" : d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }); }
 function formatDate(ts) { if (!ts) return "--"; const d = new Date(ts); return isNaN(d) ? "--" : d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }); }
 function formatDT(ts) { return ts ? `${formatDate(ts)} ${formatTime(ts)}` : "--"; }
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
@@ -188,7 +189,7 @@ function renderStatus() {
   Object.values(routes).forEach(r => { if ((r?.status === "AVAILABLE" || r?.status === "FIRE") && r?.exit) exits.add(r.exit); });
   setText("#exitCount", `${exits.size}/2`);
   setText("#exitNames", exits.size ? [...exits].join(" · ") : "—");
-  setText("#updateTime", formatTime(system.lastUpdated));
+  setText("#updateTime", formatTimeSec(system.lastUpdated));
   setText("#updateDate", formatDate(system.lastUpdated));
 }
 
