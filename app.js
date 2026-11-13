@@ -89,6 +89,7 @@ let particles = [];
 let previousValues = {};
 let realtimeSource = null;
 let realtimeRenderTimer = null;
+let lastSerialReading = 0;
 
 let state = {
   current: {
@@ -689,10 +690,64 @@ function applyRealtimeReading(payload) {
   const isFire = explicitFire !== null
     ? explicitFire
     : (temperature !== null && temperature >= TEMP_FIRE) || (smoke !== null && smoke >= SMOKE_FIRE);
-  Object.assign(zone, { temperature, humidity, smoke, fire: isFire, online: true, lastReading: timestamp, gpio: payload.gpio ?? zone.gpio });
+  lastSerialReading = Date.now();
+  setText("#liveSourceText", "ESP32 qua USB");
+  Object.assign(zone, { temperature, humidity, smoke, fire: isFire, online: true, source: "serial", lastReading: timestamp, gpio: payload.gpio ?? zone.gpio });
   recordRealtimeFire(payload.zone, wasFire, isFire, timestamp);
   recalcState();
   scheduleRealtimeRender();
+}
+
+// ── Firebase Realtime Database fallback ──
+// Serial được ưu tiên vì cập nhật 1 giây. Firebase chỉ dùng khi Serial không có dữ liệu,
+// ví dụ khi mở dashboard từ xa hoặc ESP32 mất kết nối USB.
+function applyFirebaseState(data) {
+  if (!data?.zones) return;
+  if (Date.now() - lastSerialReading < 10000) return;
+
+  const zones = {};
+  for (const id of ZONES) {
+    const z = data.zones[id];
+    if (!z) {
+      zones[id] = { ...state.current.zones[id], online: false, source: "firebase" };
+      continue;
+    }
+    zones[id] = {
+      temperature: hasNumber(z.temperature) ? Number(z.temperature) : null,
+      humidity: hasNumber(z.humidity) ? Number(z.humidity) : null,
+      smoke: hasNumber(z.smoke) ? Number(z.smoke) : null,
+      fire: !!z.fire,
+      online: true,
+      source: "firebase",
+      lastReading: 0,
+    };
+  }
+
+  state.current.zones = zones;
+  const anyFire = ZONES.some(id => zones[id].fire);
+  state.current.system.status = data.system?.status || (anyFire ? "FIRE" : "SAFE");
+  state.current.system.lastUpdated = Number(data.system?.lastUpdated) || Date.now();
+  state.current.routes = computeRoutes(zones);
+  setText("#liveSourceText", "Firebase Cloud");
+  setConnection("connected", "Firebase Cloud");
+  render();
+}
+
+async function initFirebaseFallback() {
+  if (!window.FIREBASE_CONFIG) return;
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
+    const { getDatabase, ref, onValue } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js");
+    const app = initializeApp(window.FIREBASE_CONFIG);
+    const db = getDatabase(app);
+    onValue(ref(db, "current"), snapshot => applyFirebaseState(snapshot.val()));
+    onValue(ref(db, "fireHistory"), snapshot => {
+      state.fireHistory = snapshot.val() || {};
+      renderHistory();
+    });
+  } catch (error) {
+    console.warn("Không khởi tạo được Firebase:", error);
+  }
 }
 
 function markZoneOffline(zoneId, timestamp = Date.now()) {
@@ -761,7 +816,7 @@ function checkStale() {
   let changed = false;
   ZONES.forEach(id => {
     const zone = state.current.zones[id];
-    if (zone?.online && zone.lastReading && Date.now() - zone.lastReading > SENSOR_STALE_MS) {
+    if (zone?.source !== "firebase" && zone?.online && zone.lastReading && Date.now() - zone.lastReading > SENSOR_STALE_MS) {
       markZoneOffline(id);
       changed = true;
     }
@@ -802,6 +857,7 @@ function init() {
   });
 
   activateRealtimeMode();
+  initFirebaseFallback();
 }
 
 init();
