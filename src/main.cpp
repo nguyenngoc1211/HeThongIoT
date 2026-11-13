@@ -26,7 +26,7 @@ constexpr uint8_t LED_COUNT = 14;  // Mỗi chiều đi vào tòa nhà một LED
 
 constexpr float FIRE_TEMP_C = 55.0F;
 constexpr float SAFE_TEMP_C = 48.0F;
-constexpr uint16_t FIRE_SMOKE_ADC = 2500;
+constexpr uint16_t FIRE_SMOKE_ADC = 2300;
 constexpr uint16_t SAFE_SMOKE_ADC = 2200;
 constexpr uint8_t FIRE_CONFIRM_SAMPLES = 3;
 constexpr uint8_t SAFE_CONFIRM_SAMPLES = 5;

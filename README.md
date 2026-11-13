@@ -267,7 +267,7 @@ Các lưu ý bắt buộc:
 |---|---:|
 | Báo cháy theo nhiệt độ | ≥ 55 °C |
 | Trở lại an toàn theo nhiệt độ | < 48 °C |
-| Báo cháy theo MQ-2 | ADC ≥ 2500 |
+| Báo cháy theo MQ-2 | ADC ≥ 2300 |
 | Trở lại an toàn theo MQ-2 | ADC < 2200 |
 | Xác nhận báo cháy | 3 mẫu liên tiếp |
 | Xác nhận hết cháy | 5 mẫu liên tiếp |

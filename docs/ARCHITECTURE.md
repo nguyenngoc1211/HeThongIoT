@@ -27,7 +27,7 @@ Các cạnh có trọng số: `A-C=2`, `B-C=2`, `B-D=2`, `C-E=2`, `D-E=2`, `D-F=
 
 ## Ngưỡng mặc định
 
-- Báo cháy: nhiệt độ ≥ 55 °C hoặc MQ-2 ADC ≥ 2500.
+- Báo cháy: nhiệt độ ≥ 55 °C hoặc MQ-2 ADC ≥ 2300.
 - Hết báo cháy: nhiệt độ < 48 °C và MQ-2 ADC < 2200.
 - Đây là ngưỡng demo, không phải ngưỡng an toàn được chứng nhận. Phải ghi lại ADC nền và ADC khi tạo khói thử để hiệu chuẩn từng MQ-2.
 
